@@ -2,42 +2,35 @@ package ru.academit.nikitinds.range_main;
 
 import ru.academit.nikitinds.range.Range;
 
+import java.util.Arrays;
+
 public class Main {
     public static void main(String[] args) {
-        Range firstRange = new Range(1, 4);
+        Range range1 = new Range(5, 7);
 
-        Range secondRange = new Range(2, 3);
+        Range range2 = new Range(1, 4);
 
-        Range intersection = firstRange.getIntersection(secondRange);
+        Range intersection = range1.getIntersection(range2);
 
         if (intersection == null) {
             System.out.println("Указанные интервалы не пересекаются");
         } else {
-            System.out.println("Интервал [" + intersection.getFrom() + ", " + intersection.getTo() + "]" + " является пересечением указанных интервалов");
+            System.out.println("Интервал " + intersection.toString() + " - пересечение указанных интервалов");
         }
 
         System.out.println();
 
-        Range[] union = firstRange.getUnion(secondRange);
+        Range[] union = range1.getUnion(range2);
 
-        if (union[1] != null) {
-            System.out.println("Интервал [" + union[0].getFrom() + ", " + union[0].getTo() + "] и интервал [" + union[1].getFrom() + ", " + union[1].getTo() + "] являются объединением указанных интервалов");
-        } else {
-            System.out.println("Интервал [" + union[0].getFrom() + ", " + union[0].getTo() + "]" + " является объединением указанных интервалов");
-        }
-
+        System.out.println(("Интервал(ы) " + Arrays.toString(union) + " - объединение указанных интервалов").replace("[", "").replace("]", ""));
         System.out.println();
 
-        Range[] complement = firstRange.getComplement(secondRange);
+        Range[] complement = range1.getComplement(range2);
 
-        if (complement == null) {
+        if (complement.length == 0) {
             System.out.println("Разность указанных интервалов равна нулю");
         } else {
-            if (complement[1] != null) {
-                System.out.println("Интервал [" + complement[0].getFrom() + ", " + complement[0].getTo() + "] и интервал [" + complement[1].getFrom() + ", " + complement[1].getTo() + "] являются разностью указанных интервалов");
-            } else {
-                System.out.println("Интервал [" + complement[0].getFrom() + ", " + complement[0].getTo() + "]" + " является разностью указанных интервалов");
-            }
+            System.out.println(("Интервал(ы) " + Arrays.toString(complement) + " - разность указанных интервалов").replace("[", "").replace("]", ""));
         }
     }
 }
