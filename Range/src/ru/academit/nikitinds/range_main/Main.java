@@ -30,7 +30,7 @@ public class Main {
         if (complement.length == 0) {
             System.out.println("Разность указанных интервалов равна нулю");
         } else {
-            System.out.println(("Интервал(ы)22 " + Arrays.toString(complement) + " - разность указанных интервалов").replace("[", "").replace("]", ""));
+            System.out.println(("Интервал(ы) " + Arrays.toString(complement) + " - разность указанных интервалов").replace("[", "").replace("]", ""));
         }
     }
 }

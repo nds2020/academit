@@ -77,6 +77,6 @@ public class Range {
     }
 
     public String toString() {
-        return "(" + from + "; " + to + ")22";
+        return "(" + from + "; " + to + ")";
     }
 }
