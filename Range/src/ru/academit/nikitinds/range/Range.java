@@ -38,22 +38,15 @@ public class Range {
             return null;
         }
 
-        double maxFrom = Math.max(from, range.from);
-        double minTo = Math.min(to, range.to);
-        return new Range(maxFrom, minTo);
+        return new Range(Math.max(from, range.from), Math.min(to, range.to));
     }
 
     public Range[] getUnion(Range range) {
-        double minFrom = Math.min(from, range.from);
-        double maxFrom = Math.max(from, range.from);
-        double minTo = Math.min(to, range.to);
-        double maxTo = Math.max(to, range.to);
-
         if (range.from > to || from > range.to) {
-            return new Range[]{new Range(minFrom, minTo), new Range(maxFrom, maxTo)};
+            return new Range[]{new Range(Math.min(from, range.from), Math.min(to, range.to)), new Range(Math.max(from, range.from), Math.max(to, range.to))};
         }
 
-        return new Range[]{new Range(minFrom, maxTo)};
+        return new Range[]{new Range(Math.min(from, range.from), Math.max(to, range.to))};
     }
 
     public Range[] getComplement(Range range) {

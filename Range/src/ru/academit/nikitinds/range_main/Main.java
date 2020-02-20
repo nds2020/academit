@@ -15,7 +15,7 @@ public class Main {
         if (intersection == null) {
             System.out.println("Указанные интервалы не пересекаются");
         } else {
-            System.out.println("Интервал " + intersection.toString() + " - пересечение указанных интервалов");
+            System.out.println("Интервал " + intersection + " - пересечение указанных интервалов");
         }
 
         System.out.println();
