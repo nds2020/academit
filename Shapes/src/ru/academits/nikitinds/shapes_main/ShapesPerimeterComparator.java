@@ -1,4 +1,6 @@
-package ru.academits.nikitinds.shapes;
+package ru.academits.nikitinds.shapes_main;
+
+import ru.academits.nikitinds.shapes.Shape;
 
 import java.util.Comparator;
 
