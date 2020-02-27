@@ -39,19 +39,20 @@ public class Triangle implements Shape {
         double side2 = getSideLength(x2, y2, x3, y3);
         double side3 = getSideLength(x3, y3, x1, y1);
         double semiPerimeter = (side1 + side2 + side3) / 2;
+
         return Math.sqrt(semiPerimeter * (semiPerimeter - side1) * (semiPerimeter - side2) * (semiPerimeter - side3));
     }
 
     @Override
     public double getPerimeter() {
-
         double side1 = getSideLength(x1, y1, x2, y2);
         double side2 = getSideLength(x2, y2, x3, y3);
         double side3 = getSideLength(x3, y3, x1, y1);
+
         return side1 + side2 + side3;
     }
 
-    private double getSideLength(double startX, double startY, double endX, double endY) {
+    private static double getSideLength(double startX, double startY, double endX, double endY) {
         return Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
     }
 
