@@ -46,46 +46,56 @@ public class Vector {
         return "{" + string + "\b\b}";
     }
 
-    public Vector addVector(Vector vector) {
-        Vector resultVector = new Vector(Math.max(size, vector.size), components);
+    public void add(Vector vector) {
+        if (size >= vector.size) {
+            for (int i = 0; i < vector.size; i++) {
+                components[i] += vector.components[i];
+            }
+        } else {
+            size = vector.size;
+            double[] temp = Arrays.copyOf(components, size);
 
-        for (int i = 0; i < vector.size; i++) {
-            resultVector.components[i] += vector.components[i];
+            for (int i = 0; i < size; i++) {
+                temp[i] += vector.components[i];
+            }
+
+            components = Arrays.copyOf(temp, temp.length);
         }
-
-        return resultVector;
     }
 
-    public Vector subtractVector(Vector vector) {
-        Vector resultVector = new Vector(Math.max(size, vector.size), components);
+    public void subtract(Vector vector) {
+        if (size >= vector.size) {
+            for (int i = 0; i < vector.size; i++) {
+                components[i] -= vector.components[i];
+            }
+        } else {
+            size = vector.size;
+            double[] temp = Arrays.copyOf(components, size);
 
-        for (int i = 0; i < vector.size; i++) {
-            resultVector.components[i] -= vector.components[i];
+            for (int i = 0; i < size; i++) {
+                temp[i] -= vector.components[i];
+            }
+
+            components = Arrays.copyOf(temp, temp.length);
         }
-
-        return resultVector;
     }
 
-    public Vector multiplyByScalar(double scalar) {
-        if (scalar == 0) {
-            return new Vector(size);
-        }
-
+    public void multiplyByScalar(double scalar) {
         if (scalar == 1) {
-            return new Vector(this);
+            return;
         }
 
-        Vector resultVector = new Vector(this);
+        for (int i = 0; i < size; i++) {
+            if (components[i] == 0) {
+                continue;
+            }
 
-        for (int i = 0; i < resultVector.size; i++) {
-            resultVector.components[i] *= scalar;
+            components[i] *= scalar;
         }
-
-        return resultVector;
     }
 
-    public Vector revert() {
-        return multiplyByScalar(-1);
+    public void revert() {
+        multiplyByScalar(-1);
     }
 
     public double getLength() {
@@ -125,7 +135,7 @@ public class Vector {
         }
 
         Vector vector = (Vector) object;
-        return size == vector.size && Arrays.equals(components, vector.components);
+        return Arrays.equals(components, vector.components);
     }
 
     @Override
@@ -137,24 +147,18 @@ public class Vector {
         return hash;
     }
 
-    public static Vector getVectorsSum(Vector vector1, Vector vector2) {
-        Vector resultVector = new Vector(Math.max(vector1.size, vector2.size), vector1.components);
+    public static Vector getSum(Vector vector1, Vector vector2) {
+        Vector sum = new Vector(vector1);
+        sum.add(vector2);
 
-        for (int i = 0; i < vector2.size; i++) {
-            resultVector.components[i] += vector2.components[i];
-        }
-
-        return resultVector;
+        return sum;
     }
 
-    public static Vector getVectorsDifference(Vector vector1, Vector vector2) {
-        Vector resultVector = new Vector(Math.max(vector1.size, vector2.size), vector1.components);
+    public static Vector getDifference(Vector vector1, Vector vector2) {
+        Vector difference = new Vector(vector1);
+        difference.subtract(vector2);
 
-        for (int i = 0; i < vector2.size; i++) {
-            resultVector.components[i] -= vector2.components[i];
-        }
-
-        return resultVector;
+        return difference;
     }
 
     public static double getScalarMultiplication(Vector vector1, Vector vector2) {
