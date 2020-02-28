@@ -1,7 +1,6 @@
 package ru.academits.nikitinds.shapes_main;
 
 import ru.academits.nikitinds.shapes.*;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -24,8 +23,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Shape[] shapes = {new Circle(3), new Square(5), new Triangle(0, 0, 2, 2, 1, 3),
-                    new Rectangle(3, 4), new Square(3), new Circle(6), new Square(4)};
+            Shape[] shapes = {new Circle(6), new Square(5), new Triangle(0, 0, 2, 2, 1, 3),
+                    new Rectangle(3, 4), new Square(3), new Circle(3), new Square(4)};
 
             System.out.println("Фигура с максимальной площадью - это " + getShapeWithMaxArea(shapes));
 
