@@ -1,12 +1,12 @@
-package vector_main;
+package ru.academits.nikitinds.vector_main;
 
-import ru.academits.nikitinds.Vector;
+import ru.academits.nikitinds.vector.Vector;
 
 public class Main {
     public static void main(String[] args) {
         try {
             int size = 7;
-            double[] components = {1, 2, 3};
+            double[] components1 = {1, 2, 3};
             double[] components2 = {4, 5, 6, 7, 8};
 
             // проверяем конструкторы
@@ -14,7 +14,7 @@ public class Main {
 
             System.out.println("Вектор1 " + vector1 + " создали конструктором Vector(n)");
 
-            Vector vector2 = new Vector(components);
+            Vector vector2 = new Vector(components1);
 
             System.out.println("Вектор2 " + vector2 + " создали конструктором Vector(double[])");
 
@@ -62,7 +62,7 @@ public class Main {
             System.out.println("И теперь " + (vector5.equals(vector4) ? "вектор5 равен вектору4" : "вектор5 не равен вектору4"));
             System.out.println();
 
-            System.out.printf("Длина вектора5 равна %.2f, а вектора4 равна %.2f%n%n", vector5.getLength(), vector4.getLength());
+            System.out.printf("Длина вектора5 равна %.2f, длина вектора4 равна %.2f%n%n", vector5.getModule(), vector4.getModule());
 
             //проверяем статические методы
             Vector vector6 = Vector.getSum(vector4, vector5);
@@ -71,7 +71,7 @@ public class Main {
             System.out.println("при этом вектор4 " + vector4 + " и вектор5 " + vector5 + " не изменились");
             System.out.println();
 
-            Vector vector7 = new Vector(components);
+            Vector vector7 = new Vector(components1);
 
             System.out.println("Создали вектор7 " + vector7);
             System.out.println();
@@ -94,8 +94,8 @@ public class Main {
             System.out.println("при этом вектор7 " + vector7 + " и вектор6 " + vector6 + " не изменились");
             System.out.println();
 
-            System.out.println(Vector.getScalarMultiplication(vector9, vector10) + " - это скаларное произведение векторов 9 и 10");
-            System.out.println(Vector.getScalarMultiplication(vector7, vector8) + " - это скаларное произведение векторов 7 и 8");
+            System.out.println(Vector.getScalarProduct(vector9, vector10) + " - это скаларное произведение векторов 9 и 10");
+            System.out.println(Vector.getScalarProduct(vector7, vector8) + " - это скаларное произведение векторов 7 и 8");
         } catch (IllegalArgumentException e) {
             System.out.println("Введены некорректные данные - " + e.getLocalizedMessage());
         }
