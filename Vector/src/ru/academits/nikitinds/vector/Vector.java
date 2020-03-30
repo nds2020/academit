@@ -7,7 +7,7 @@ public class Vector {
 
     public Vector(int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("размерность вектора должна быть больше нуля");
+            throw new IllegalArgumentException("Указанная для создания вектора размерность " + size + " должна быть больше нуля");
         }
 
         components = new double[size];
@@ -18,11 +18,22 @@ public class Vector {
     }
 
     public Vector(double[] components) {
-        this.components = Arrays.copyOf(components, components.length);
+        int arrayElementsCount = components.length;
+
+        if (arrayElementsCount == 0) {
+            throw new IllegalArgumentException("Указанный для создания вектора массив должен состоять хотя бы из одного элемента");
+        }
+
+        this.components = Arrays.copyOf(components, arrayElementsCount);
     }
 
     public Vector(int size, double[] components) {
-        this.components = Arrays.copyOf(components, size);
+        this(size);
+        int arrayElementsCount = components.length;
+
+        if (arrayElementsCount != 0) {
+            System.arraycopy(components, 0, this.components, 0, Math.min(size, arrayElementsCount));
+        }
     }
 
     public int getSize() {
@@ -88,19 +99,20 @@ public class Vector {
         multiplyByScalar(-1);
     }
 
-    public double getModule() {
-        double module = 0;
+    public double getLength() {
+        double componentsSum = 0;
 
         for (double component : components) {
-            module += Math.pow(component, 2);
+            componentsSum += Math.pow(component, 2);
         }
 
-        return Math.sqrt(module);
+        return Math.sqrt(componentsSum);
     }
 
     public double getComponent(int index) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("индексом компоненты должно быть неотрицательное число меньше рамера вектора");
+            throw new IndexOutOfBoundsException("Указанный индекс " + index + " получаемой компоненты вышел за границы существующих индексов (0, " +
+                    (components.length - 1) + ") компонент вектора");
         }
 
         return components[index];
@@ -108,7 +120,8 @@ public class Vector {
 
     public void setComponent(int index, double component) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("индексом компоненты должно быть неотрицательное число меньше рамера вектора");
+            throw new IndexOutOfBoundsException("Указанный индекс " + index + " задаваемой компоненты вышел за границы существующих индексов (0, " +
+                    (components.length - 1) + ") компонент вектора");
         }
 
         components[index] = component;

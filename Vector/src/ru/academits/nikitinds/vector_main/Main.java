@@ -59,10 +59,10 @@ public class Main {
             vector5.setComponent(vector5.getSize() - 1, vector4.getComponent(vector5.getSize() - 1));
             vector5.multiplyByScalar(0.5);
             System.out.println("Заменили последнюю компоненту вектора5 на последнюю компоненту вектора4, затем умножили вектор5 на скаляр 0,5, вектор5 теперь такой " + vector5);
-            System.out.println("И теперь " + (vector5.equals(vector4) ? "вектор5 равен вектору4" : "вектор5 не равен вектору4"));
+            System.out.println("Теперь " + (vector5.equals(vector4) ? "вектор5 равен вектору4" : "вектор5 не равен вектору4"));
             System.out.println();
 
-            System.out.printf("Длина вектора5 равна %.2f, длина вектора4 равна %.2f%n%n", vector5.getModule(), vector4.getModule());
+            System.out.printf("Длина вектора5 равна %.2f, длина вектора4 равна %.2f%n%n", vector5.getLength(), vector4.getLength());
 
             //проверяем статические методы
             Vector vector6 = Vector.getSum(vector4, vector5);
@@ -94,9 +94,9 @@ public class Main {
             System.out.println("при этом вектор7 " + vector7 + " и вектор6 " + vector6 + " не изменились");
             System.out.println();
 
-            System.out.println(Vector.getScalarProduct(vector9, vector10) + " - это скаларное произведение векторов 9 и 10");
-            System.out.println(Vector.getScalarProduct(vector7, vector8) + " - это скаларное произведение векторов 7 и 8");
-        } catch (IllegalArgumentException e) {
+            System.out.println(Vector.getScalarProduct(vector9, vector10) + " - это скалярное произведение векторов 9 и 10");
+            System.out.println(Vector.getScalarProduct(vector7, vector8) + " - это скалярное произведение векторов 7 и 8");
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
             System.out.println("Введены некорректные данные - " + e.getLocalizedMessage());
         }
     }
