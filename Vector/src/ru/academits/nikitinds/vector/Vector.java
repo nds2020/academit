@@ -109,22 +109,26 @@ public class Vector {
         return Math.sqrt(componentsSum);
     }
 
-    public double getComponent(int index) {
-        if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Указанный индекс " + index + " получаемой компоненты вышел за границы существующих индексов (0, " +
-                    (components.length - 1) + ") компонент вектора");
+    public double getComponent(int componentIndex) {
+        int vectorSize = components.length;
+
+        if (componentIndex < 0 || componentIndex >= vectorSize) {
+            throw new IndexOutOfBoundsException("Указанный индекс " + componentIndex + " получаемой компоненты вышел " +
+                    "за границы существующих индексов (0, " + (vectorSize - 1) + ") компонент вектора");
         }
 
-        return components[index];
+        return components[componentIndex];
     }
 
-    public void setComponent(int index, double component) {
-        if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Указанный индекс " + index + " задаваемой компоненты вышел за границы существующих индексов (0, " +
-                    (components.length - 1) + ") компонент вектора");
+    public void setComponent(int componentIndex, double component) {
+        int vectorSize = components.length;
+
+        if (componentIndex < 0 || componentIndex >= vectorSize) {
+            throw new IndexOutOfBoundsException("Указанный индекс " + componentIndex + " задаваемой компоненты вышел " +
+                    "за границы существующих индексов (0, " + (vectorSize - 1) + ") компонент вектора");
         }
 
-        components[index] = component;
+        components[componentIndex] = component;
     }
 
     @Override
