@@ -28,12 +28,11 @@ public class Vector {
     }
 
     public Vector(int size, double[] components) {
-        this(size);
-        int arrayElementsCount = components.length;
-
-        if (arrayElementsCount != 0) {
-            System.arraycopy(components, 0, this.components, 0, Math.min(size, arrayElementsCount));
+        if (size <= 0) {
+            throw new IllegalArgumentException("Указанная для создания вектора размерность " + size + " должна быть больше нуля");
         }
+
+        this.components = Arrays.copyOf(components, size);
     }
 
     public int getSize() {
@@ -100,35 +99,31 @@ public class Vector {
     }
 
     public double getLength() {
-        double componentsSum = 0;
+        double sum = 0;
 
         for (double component : components) {
-            componentsSum += Math.pow(component, 2);
+            sum += Math.pow(component, 2);
         }
 
-        return Math.sqrt(componentsSum);
+        return Math.sqrt(sum);
     }
 
-    public double getComponent(int componentIndex) {
-        int vectorSize = components.length;
-
-        if (componentIndex < 0 || componentIndex >= vectorSize) {
-            throw new IndexOutOfBoundsException("Указанный индекс " + componentIndex + " получаемой компоненты вышел " +
-                    "за границы существующих индексов (0, " + (vectorSize - 1) + ") компонент вектора");
+    public double getComponent(int index) {
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException("Индекс " + index + " запрошенной компоненты вышел за границы индексов " +
+                    "компонент вектора");
         }
 
-        return components[componentIndex];
+        return components[index];
     }
 
-    public void setComponent(int componentIndex, double component) {
-        int vectorSize = components.length;
-
-        if (componentIndex < 0 || componentIndex >= vectorSize) {
-            throw new IndexOutOfBoundsException("Указанный индекс " + componentIndex + " задаваемой компоненты вышел " +
-                    "за границы существующих индексов (0, " + (vectorSize - 1) + ") компонент вектора");
+    public void setComponent(int index, double component) {
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException("Индекс " + index + " задаваемой компоненты вышел за границы индексов " +
+                    "компонент вектора");
         }
 
-        components[componentIndex] = component;
+        components[index] = component;
     }
 
     @Override
