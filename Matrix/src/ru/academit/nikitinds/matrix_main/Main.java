@@ -15,7 +15,7 @@ public class Main {
 
         Matrix m1 = new Matrix(a, b);
         System.out.println("Создали матрицу1 " + m1 + " размера " + a + " на " + b);
-        System.out.println("У матрицы1 строк - " + m1.getRowsCount() + " столбцов - " + m1.getColumnsCount());
+        System.out.println("У матрицы1 строк: " + m1.getRowsCount() + ", столбцов: " + m1.getColumnsCount());
         System.out.println();
 
         Matrix m2 = new Matrix(arrays);
@@ -33,11 +33,8 @@ public class Main {
         m2.transpose();
         System.out.println("Транспонировали матрицу2, теперь она такая " + m2);
 
-        m2.multiplyByVector(rowVector);
-        System.out.println("Умножили матрицу2 на вектор " + rowVector + ", теперь матрица2 такая " + m2);
-
-        m2.multiplyByVector(rowVector);
-        System.out.println("Снова умножили матрицу2 на вектор " + rowVector + ", теперь матрица2 такая " + m2);
+        Vector vector = m2.multiplyByVector(rowVector);
+        System.out.println("Умножили матрицу2 на вектор " + rowVector + ", в результате получили новый вектор " + vector);
         System.out.println();
 
         Matrix m3 = new Matrix(new Vector[]{v1, v2, v3, v4});
