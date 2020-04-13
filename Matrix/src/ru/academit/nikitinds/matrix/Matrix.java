@@ -19,11 +19,9 @@ public class Matrix {
     }
 
     public Matrix(Matrix matrix) {
-        int rowsCount = matrix.rows.length;
+        rows = new Vector[matrix.rows.length];
 
-        rows = new Vector[rowsCount];
-
-        for (int i = 0; i < rowsCount; i++) {
+        for (int i = 0; i < matrix.rows.length; i++) {
             rows[i] = new Vector(matrix.rows[i]);
         }
     }
@@ -40,19 +38,15 @@ public class Matrix {
                     "непустой одномерный массив");
         }
 
-        int rowsCount = arrays.length;
+        rows = new Vector[arrays.length];
 
-        rows = new Vector[rowsCount];
-
-        for (int i = 0; i < rowsCount; i++) {
+        for (int i = 0; i < arrays.length; i++) {
             rows[i] = new Vector(columnsCount, arrays[i]);
         }
     }
 
     public Matrix(Vector[] vectors) {
-        int rowsCount = vectors.length;
-
-        if (rowsCount == 0){
+        if (vectors.length == 0){
             throw new IllegalArgumentException("Для создания матрицы из массива векторов в массиве должен быть хотя бы " +
                     "один вектор");
         }
@@ -63,9 +57,9 @@ public class Matrix {
             columnsCount = Math.max(columnsCount, vector.getSize());
         }
 
-        rows = new Vector[rowsCount];
+        rows = new Vector[vectors.length];
 
-        for (int i = 0; i < rowsCount; i++) {
+        for (int i = 0; i < vectors.length; i++) {
             rows[i] = new Vector(columnsCount);
             rows[i].add(vectors[i]);
         }
@@ -136,21 +130,19 @@ public class Matrix {
     }
 
     public double getDeterminant() {
-        int matrixRowsCount = rows.length;
-
-        if (matrixRowsCount != getColumnsCount()) {
-            throw new IllegalArgumentException("Для вычисления определителя количество строк " + matrixRowsCount +
+        if (rows.length != getColumnsCount()) {
+            throw new IllegalArgumentException("Для вычисления определителя количество строк " + rows.length +
                     " и столбцов " + getColumnsCount() + " в матрице должно быть одинаковым");
         }
 
-        if (matrixRowsCount == 1) {
+        if (rows.length == 1) {
             return rows[0].getComponent(0);
         }
 
         double determinant = 0;
 
-        for (int i = 0; i < matrixRowsCount; i++) {
-            int subMatrixSize = matrixRowsCount - 1;
+        for (int i = 0; i < rows.length; i++) {
+            int subMatrixSize = rows.length - 1;
 
             Matrix subMatrix = new Matrix(subMatrixSize, subMatrixSize);
 
@@ -248,21 +240,15 @@ public class Matrix {
     }
 
     public static Matrix getProduct(Matrix matrix1, Matrix matrix2) {
-        int firstMatrixColumnsCount = matrix1.getColumnsCount();
-        int secondMatrixRowsCount = matrix2.getRowsCount();
-
-        if (firstMatrixColumnsCount != secondMatrixRowsCount) {
-            throw new IllegalArgumentException("Для умножения матриц количество столбцов первой матрицы " + firstMatrixColumnsCount +
-                    " должно быть равно количеству строк второй матрицы " + secondMatrixRowsCount);
+        if (matrix1.getColumnsCount() != matrix2.getRowsCount()) {
+            throw new IllegalArgumentException("Для умножения матриц количество столбцов первой матрицы " + matrix1.getColumnsCount() +
+                    " должно быть равно количеству строк второй матрицы " + matrix2.getRowsCount());
         }
 
-        int firstMatrixRowsCount = matrix1.getRowsCount();
-        int secondMatrixColumnsCount = matrix2.getColumnsCount();
+        Matrix product = new Matrix(matrix1.getRowsCount(), matrix2.getColumnsCount());
 
-        Matrix product = new Matrix(firstMatrixRowsCount, secondMatrixColumnsCount);
-
-        for (int i = 0; i < firstMatrixRowsCount; i++) {
-            for (int j = 0; j < secondMatrixColumnsCount; j++) {
+        for (int i = 0; i < matrix1.getRowsCount(); i++) {
+            for (int j = 0; j < matrix2.getColumnsCount(); j++) {
                 product.rows[i].setComponent(j, Vector.getScalarProduct(matrix1.rows[i], matrix2.getColumn(j)));
             }
         }
