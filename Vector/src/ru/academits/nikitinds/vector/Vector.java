@@ -111,7 +111,7 @@ public class Vector {
     public double getComponent(int index) {
         if (index < 0 || index >= components.length) {
             throw new IndexOutOfBoundsException("Индекс " + index + " запрошенной компоненты вышел за границы индексов " +
-                    "компонент вектора");
+                    "компонент вектора. Размер вектора: " + components.length);
         }
 
         return components[index];
@@ -120,7 +120,7 @@ public class Vector {
     public void setComponent(int index, double component) {
         if (index < 0 || index >= components.length) {
             throw new IndexOutOfBoundsException("Индекс " + index + " задаваемой компоненты вышел за границы индексов " +
-                    "компонент вектора");
+                    "компонент вектора. Размер вектора: " + components.length);
         }
 
         components[index] = component;
