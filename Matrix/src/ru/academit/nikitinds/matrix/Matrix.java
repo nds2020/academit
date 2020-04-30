@@ -27,6 +27,11 @@ public class Matrix {
     }
 
     public Matrix(double[][] arrays) {
+        if (arrays.length == 0) {
+            throw new IllegalArgumentException("Для создания матрицы из двумерного массива в нем должен быть хотя бы один " +
+                    "непустой одномерный массив");
+        }
+
         int columnsCount = 0;
 
         for (double[] array : arrays) {
