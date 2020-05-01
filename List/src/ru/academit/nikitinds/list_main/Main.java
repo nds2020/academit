@@ -1,8 +1,8 @@
-package ru.academit.nikitinds.singlylinkedlist_main;
+package ru.academit.nikitinds.list_main;
 
-import ru.academit.nikitinds.singlylinkedlist.SinglyLinkedList;
+import ru.academit.nikitinds.list.SinglyLinkedList;
 
-public class SinglyLinkedList_main {
+public class Main {
     public static void main(String[] args) {
         SinglyLinkedList<Double> numbers = new SinglyLinkedList<>();
 

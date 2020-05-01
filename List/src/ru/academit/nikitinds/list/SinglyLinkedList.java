@@ -1,4 +1,4 @@
-package ru.academit.nikitinds.singlylinkedlist;
+package ru.academit.nikitinds.list;
 
 import java.util.NoSuchElementException;
 
