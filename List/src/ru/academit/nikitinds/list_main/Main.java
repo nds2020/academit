@@ -61,7 +61,7 @@ public class Main {
         System.out.println("Длина списка равна " + numbers.getSize());
         System.out.println();
 
-        double newElement = 30;
+        double newElement = 20;
         if (numbers.remove(newElement)) {
             System.out.println("Удалили из списка элемент " + newElement);
             System.out.println("В списке следующие элементы " + numbers);
@@ -69,10 +69,11 @@ public class Main {
             System.out.println();
         } else {
             System.out.println("Пытались удалить из списка элемент " + newElement + ", но его не оказалось в списке");
+            System.out.println();
         }
 
         index = 0;
-        System.out.println("Изменили в списке элемент " + numbers.set(index, newElement) + " на " + newElement);
+        System.out.println("Изменили в списке по индексу " + index + " элемент " + numbers.set(index, newElement) + " на " + newElement);
         System.out.println("В списке следующие элементы " + numbers);
         System.out.println("Длина списка равна " + numbers.getSize());
     }

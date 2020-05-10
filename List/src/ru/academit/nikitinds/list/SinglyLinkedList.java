@@ -1,13 +1,11 @@
 package ru.academit.nikitinds.list;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class SinglyLinkedList<T> {
     private ListElement<T> head;
     private int count;
-
-    public SinglyLinkedList() {
-    }
 
     public int getSize() {
         return count;
@@ -43,10 +41,10 @@ public class SinglyLinkedList<T> {
             return removeFirst();
         }
 
-        ListElement<T> previous = findElement(index - 1);
+        ListElement<T> prev = findElement(index - 1);
 
-        T removedData = previous.next.data;
-        previous.next = previous.next.next;
+        T removedData = prev.next.data;
+        prev.next = prev.next.next;
         count--;
         return removedData;
     }
@@ -66,38 +64,28 @@ public class SinglyLinkedList<T> {
             return;
         }
 
-        ListElement<T> previous = findElement(index - 1);
+        ListElement<T> prev = findElement(index - 1);
 
-        previous.next = new ListElement<>(data, previous.next);
+        prev.next = new ListElement<>(data, prev.next);
         count++;
     }
 
     public boolean remove(T data) {
-        if (data == null) {
-            for (ListElement<T> e = head, prev = null; e != null; prev = e, e = e.next) {
-                if (e.data == null) {
-                    if (prev == null) {
-                        removeFirst();
-                    } else {
-                        prev.next = e.next;
-                        count--;
-                    }
+        if (head == null) {
+            throw new NoSuchElementException("Список пуст");
+        }
 
-                    return true;
-                }
-            }
-        } else {
-            for (ListElement<T> e = head, prev = null; e != null; prev = e, e = e.next) {
-                if (data.equals(e.data)) {
-                    if (prev == null) {
-                        removeFirst();
-                    } else {
-                        prev.next = e.next;
-                        count--;
-                    }
+        if (Objects.equals(data, head.data)) {
+            head = head.next;
+            count--;
+            return true;
+        }
 
-                    return true;
-                }
+        for (ListElement<T> crt = head.next, prev = head; crt != null; prev = crt, crt = crt.next) {
+            if (Objects.equals(data, crt.data)) {
+                prev.next = crt.next;
+                count--;
+                return true;
             }
         }
 
@@ -116,31 +104,37 @@ public class SinglyLinkedList<T> {
     }
 
     public void revert() {
-        ListElement<T> current = head;
-        ListElement<T> previous = null;
-
-        while (current.next != null) {
-            head = current.next;
-            current.next = previous;
-            previous = current;
-            current = head;
+        if (head == null || head.next == null) {
+            return;
         }
 
-        head.next = previous;
+        ListElement<T> crt = head;
+        ListElement<T> prev = null;
+
+        while (crt.next != null) {
+            head = crt.next;
+            crt.next = prev;
+            prev = crt;
+            crt = head;
+        }
+
+        head.next = prev;
     }
 
     public SinglyLinkedList<T> copy() {
-        SinglyLinkedList<T> newList = new SinglyLinkedList<>();
-
-        if (head != null) {
-            newList.addFirst(head.data);
-
-            for (ListElement<T> src = head.next, dest = newList.head; src != null; dest = dest.next, src = src.next) {
-                dest.next = new ListElement<>(src.data, dest.next);
-                newList.count++;
-            }
+        if (head == null) {
+            return new SinglyLinkedList<>();
         }
 
+        SinglyLinkedList<T> newList = new SinglyLinkedList<>();
+
+        newList.head = new ListElement<>(head.data, null);
+
+        for (ListElement<T> src = head.next, dest = newList.head; src != null; dest = dest.next, src = src.next) {
+            dest.next = new ListElement<>(src.data, null);
+        }
+
+        newList.count = count;
         return newList;
     }
 
