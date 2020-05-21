@@ -41,10 +41,10 @@ public class SinglyLinkedList<T> {
             return removeFirst();
         }
 
-        ListElement<T> prev = findElement(index - 1);
+        ListElement<T> previous = findElement(index - 1);
 
-        T removedData = prev.next.data;
-        prev.next = prev.next.next;
+        T removedData = previous.next.data;
+        previous.next = previous.next.next;
         count--;
         return removedData;
     }
@@ -64,15 +64,15 @@ public class SinglyLinkedList<T> {
             return;
         }
 
-        ListElement<T> prev = findElement(index - 1);
+        ListElement<T> previous = findElement(index - 1);
 
-        prev.next = new ListElement<>(data, prev.next);
+        previous.next = new ListElement<>(data, previous.next);
         count++;
     }
 
     public boolean remove(T data) {
         if (head == null) {
-            throw new NoSuchElementException("Список пуст");
+            return false;
         }
 
         if (Objects.equals(data, head.data)) {
@@ -81,9 +81,9 @@ public class SinglyLinkedList<T> {
             return true;
         }
 
-        for (ListElement<T> crt = head.next, prev = head; crt != null; prev = crt, crt = crt.next) {
-            if (Objects.equals(data, crt.data)) {
-                prev.next = crt.next;
+        for (ListElement<T> current = head.next, previous = head; current != null; previous = current, current = current.next) {
+            if (Objects.equals(data, current.data)) {
+                previous.next = current.next;
                 count--;
                 return true;
             }
@@ -108,17 +108,17 @@ public class SinglyLinkedList<T> {
             return;
         }
 
-        ListElement<T> crt = head;
-        ListElement<T> prev = null;
+        ListElement<T> current = head;
+        ListElement<T> previous = null;
 
-        while (crt.next != null) {
-            head = crt.next;
-            crt.next = prev;
-            prev = crt;
-            crt = head;
+        while (current.next != null) {
+            head = current.next;
+            current.next = previous;
+            previous = current;
+            current = head;
         }
 
-        head.next = prev;
+        head.next = previous;
     }
 
     public SinglyLinkedList<T> copy() {
@@ -130,8 +130,8 @@ public class SinglyLinkedList<T> {
 
         newList.head = new ListElement<>(head.data, null);
 
-        for (ListElement<T> src = head.next, dest = newList.head; src != null; dest = dest.next, src = src.next) {
-            dest.next = new ListElement<>(src.data, null);
+        for (ListElement<T> source = head.next, destination = newList.head; source != null; destination = destination.next, source = source.next) {
+            destination.next = new ListElement<>(source.data, null);
         }
 
         newList.count = count;
