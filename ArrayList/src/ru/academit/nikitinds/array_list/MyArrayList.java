@@ -1,4 +1,4 @@
-package ru.academit.nikitinds.arrya_list;
+package ru.academit.nikitinds.array_list;
 
 import java.util.*;
 
