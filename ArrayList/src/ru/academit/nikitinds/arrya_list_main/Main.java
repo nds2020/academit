@@ -1,6 +1,6 @@
-package ru.academit.nikitinds.arryalist_main;
+package ru.academit.nikitinds.arrya_list_main;
 
-import ru.academit.nikitinds.arryalist.MyArrayList;
+import ru.academit.nikitinds.arrya_list.MyArrayList;
 import java.util.Arrays;
 
 public class Main {
