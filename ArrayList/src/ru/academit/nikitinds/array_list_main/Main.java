@@ -15,7 +15,7 @@ public class Main {
         System.out.println();
 
         integers.ensureCapacity(7);
-        System.out.println("Увеличсилил вместимость integers, она теперь равна " + integers.capacity());
+        System.out.println("Увеличили вместимость integers, она теперь равна " + integers.capacity());
         integers.trimToSize();
         System.out.println("Уменьшили вместимость integers, она теперь равна " + integers.capacity());
         System.out.println();

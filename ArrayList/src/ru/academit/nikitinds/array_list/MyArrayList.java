@@ -13,6 +13,10 @@ public class MyArrayList<E> implements List<E> {
     }
 
     public MyArrayList(int initialCapacity) {
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException("Вместимость списка должна быть больше 0");
+        }
+
         //noinspection unchecked
         elements = (E[]) new Object[initialCapacity];
     }
