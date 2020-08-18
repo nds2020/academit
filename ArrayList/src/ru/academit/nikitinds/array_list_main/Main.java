@@ -33,10 +33,14 @@ public class Main {
         System.out.println("Добавили в numbers все элементы integers, numbers теперь содержит: " + numbers);
         System.out.println();
 
+        numbers.addAll(1, integers);
+        System.out.println("Добавили в numbers c индекса 1 все элементы integers, numbers теперь содержит: " + numbers);
+        System.out.println();
+
         numbers.remove(Integer.valueOf(4));
         System.out.println("Удалили из numbers элемент 4: " + numbers);
         numbers.remove(numbers.size() - 1);
-        System.out.println("Удалили из numbers элемент по индексу: " + numbers);
+        System.out.println("Удалили из numbers элемент по последнему индексу: " + numbers);
         numbers.removeAll(integers);
         System.out.println("Удалили из numbers все элементы, которые есть в integers, numbers теперь содержит: " + numbers);
         System.out.println("Размер numbers равен " + numbers.size() + ", вместимость numbers равна " + numbers.capacity());
@@ -60,7 +64,7 @@ public class Main {
         if (strings.contains(string)) {
             System.out.println("strings содержит " + string);
         } else {
-            System.out.println("numbers не содержит " + string);
+            System.out.println("strings не содержит " + string);
         }
 
         System.out.println();
