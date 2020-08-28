@@ -37,7 +37,7 @@ public class ArrayListHome {
         System.out.println("Оставили только нечетные числа в оригинальном списке: " + numbers);
         System.out.println();
 
-        List<Integer> uniqueNumbers = new ArrayList<>();
+        List<Integer> uniqueNumbers = new ArrayList<>(numbers.size());
 
         for (Integer number : numbers) {
             if (!uniqueNumbers.contains(number)) {
