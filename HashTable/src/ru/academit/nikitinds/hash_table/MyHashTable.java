@@ -5,6 +5,7 @@ import java.util.*;
 public class MyHashTable<E> implements Collection<E> {
     private final LinkedList<E>[] rows;
     private int elementsCount;
+    private int modCount;
 
     public MyHashTable() {
         //noinspection unchecked
@@ -50,11 +51,9 @@ public class MyHashTable<E> implements Collection<E> {
     public boolean containsAll(Collection<?> c) {
         checkForNull(c);
 
-        if (c.size() != 0) {
-            for (Object o : c) {
-                if (!contains(o)) {
-                    return false;
-                }
+        for (Object o : c) {
+            if (!contains(o)) {
+                return false;
             }
         }
 
@@ -65,12 +64,10 @@ public class MyHashTable<E> implements Collection<E> {
     public Object[] toArray() {
         Object[] result = new Object[elementsCount];
 
-        if (elementsCount != 0) {
-            Iterator<E> tableIterator = new MyHashTableIterator();
+        int index = 0;
 
-            for (int i = 0; i < elementsCount; i++) {
-                result[i] = tableIterator.next();
-            }
+        for (E element : this) {
+            result[index++] = element;
         }
 
         return result;
@@ -83,12 +80,10 @@ public class MyHashTable<E> implements Collection<E> {
             a = (T[]) Arrays.copyOf(a, elementsCount, a.getClass());
         }
 
-        if (elementsCount != 0) {
-            Iterator<E> tableIterator = new MyHashTableIterator();
+        int index = 0;
 
-            for (int i = 0; i < elementsCount; i++) {
-                a[i] = (T) tableIterator.next();
-            }
+        for (E element : this) {
+            a[index++] = (T) element;
         }
 
         if (a.length > elementsCount) {
@@ -107,12 +102,15 @@ public class MyHashTable<E> implements Collection<E> {
         }
 
         elementsCount++;
+        modCount++;
         return rows[eHash].add(e);
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if (c == null || c.size() == 0) {
+        checkForNull(c);
+
+        if (c.size() == 0) {
             return false;
         }
 
@@ -130,6 +128,7 @@ public class MyHashTable<E> implements Collection<E> {
         if (rows[oHash] != null) {
             if (rows[oHash].remove(o)) {
                 elementsCount--;
+                modCount++;
                 return true;
             }
         }
@@ -157,6 +156,7 @@ public class MyHashTable<E> implements Collection<E> {
                     if (Objects.equals(iterator.next(), o)) {
                         iterator.remove();
                         elementsCount--;
+                        modCount++;
                         hasRemove = true;
                     }
                 }
@@ -169,6 +169,10 @@ public class MyHashTable<E> implements Collection<E> {
     @Override
     public boolean retainAll(Collection<?> c) {
         checkForNull(c);
+
+        if (elementsCount == 0) {
+            return false;
+        }
 
         if (c.size() == 0) {
             clear();
@@ -185,6 +189,7 @@ public class MyHashTable<E> implements Collection<E> {
                     if (!c.contains(iterator.next())) {
                         iterator.remove();
                         elementsCount--;
+                        modCount++;
                         hasRemove = true;
                     }
                 }
@@ -198,13 +203,14 @@ public class MyHashTable<E> implements Collection<E> {
     public void clear() {
         Arrays.fill(rows, null);
         elementsCount = 0;
+        modCount++;
     }
 
     private int getHashCode(Object o) {
         return (o == null) ? 0 : Math.abs(o.hashCode() % rows.length);
     }
 
-    private void checkForNull(Object c) {
+    private static void checkForNull(Object c) {
         if (c == null) {
             throw new NullPointerException("Коллекция-аргумент не должна быть null");
         }
@@ -212,38 +218,37 @@ public class MyHashTable<E> implements Collection<E> {
 
     private class MyHashTableIterator implements Iterator<E> {
         private int currentFilledRowIndex = -1;
+        private int visitedElementsCount = 0;
         private Iterator<E> rowIterator;
-
-        private boolean hasNextFilledRow(int currentFilledRowIndex) {
-            return nextFilledRowIndex(currentFilledRowIndex) >= 0;
-        }
-
-        private int nextFilledRowIndex(int currentFilledRowIndex) {
-            for (int i = currentFilledRowIndex + 1; i < rows.length; i++) {
-                if (rows[i] != null && rows[i].size() != 0) {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
+        private final int expectedModCount = modCount;
 
         @Override
         public boolean hasNext() {
-            return elementsCount != 0 && (hasNextFilledRow(currentFilledRowIndex) || rowIterator.hasNext());
+            return visitedElementsCount < elementsCount;
         }
 
         @Override
         public E next() {
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException("Таблица была изменена");
+            }
+
             if (!hasNext()) {
                 throw new NoSuchElementException("В таблице больше нет элементов");
             }
 
             if (currentFilledRowIndex == -1 || !rowIterator.hasNext()) {
-                currentFilledRowIndex = nextFilledRowIndex(currentFilledRowIndex);
-                rowIterator = rows[currentFilledRowIndex].iterator();
+                while (currentFilledRowIndex < rows.length) {
+                    currentFilledRowIndex++;
+
+                    if (rows[currentFilledRowIndex] != null && rows[currentFilledRowIndex].size() != 0) {
+                        rowIterator = rows[currentFilledRowIndex].iterator();
+                        break;
+                    }
+                }
             }
 
+            visitedElementsCount++;
             return rowIterator.next();
         }
     }
