@@ -3,13 +3,14 @@ package ru.academit.nikitinds.array_list;
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 10;
     private E[] elements;
     private int length;
     private int modCount;
 
     public MyArrayList() {
         //noinspection unchecked
-        elements = (E[]) new Object[10];
+        elements = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     public MyArrayList(int initialCapacity) {
@@ -28,7 +29,7 @@ public class MyArrayList<E> implements List<E> {
             length = c.size();
         } else {
             //noinspection unchecked
-            elements = (E[]) new Object[10];
+            elements = (E[]) new Object[DEFAULT_CAPACITY];
         }
     }
 
@@ -73,8 +74,9 @@ public class MyArrayList<E> implements List<E> {
     }
 
     public void ensureCapacity(int minCapacity) {
-        if (minCapacity > elements.length) {
-            elements = Arrays.copyOf(elements, minCapacity + elements.length);
+        if (minCapacity > elements.length - length) {
+            int newCapacity = elements.length + minCapacity + DEFAULT_CAPACITY;
+            elements = Arrays.copyOf(elements, newCapacity);
         }
     }
 
@@ -117,7 +119,7 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + length);
         }
 
-        ensureCapacity(length + 1);
+        ensureCapacity(1);
 
         if (index == length) {
             elements[length] = element;
@@ -137,7 +139,9 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (c == null || c.size() == 0) {
+        checkForNull(c);
+
+        if (c.size() == 0) {
             return false;
         }
         
@@ -145,15 +149,16 @@ public class MyArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + length);
         }
 
-        ensureCapacity(length + c.size());
+        ensureCapacity(c.size());
 
         if (index != length) {
             System.arraycopy(elements, index, elements, index + c.size(), length - index);
         }
 
+        int temp = index;
+
         for (E element : c) {
-            elements[index] = element;
-            index++;
+            elements[temp++] = element;
         }
 
         length += c.size();
@@ -243,7 +248,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        Arrays.fill(elements, 0, length - 1, null);
+        Arrays.fill(elements, 0, length, null);
         length = 0;
         modCount++;
     }
@@ -257,11 +262,9 @@ public class MyArrayList<E> implements List<E> {
     public boolean containsAll(Collection<?> c) {
         checkForNull(c);
 
-        if (c.size() != 0) {
-            for (Object o : c) {
-                if (!contains(o)) {
-                    return false;
-                }
+        for (Object o : c) {
+            if (!contains(o)) {
+                return false;
             }
         }
 
@@ -323,7 +326,7 @@ public class MyArrayList<E> implements List<E> {
         return null;
     }
 
-    private void checkForNull(Object o) {
+    private static void checkForNull(Object o) {
         if (o == null) {
             throw new NullPointerException("Коллекция-аргумент не должна быть null");
         }
