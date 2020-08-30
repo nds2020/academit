@@ -75,7 +75,7 @@ public class MyArrayList<E> implements List<E> {
 
     public void ensureCapacity(int minCapacity) {
         if (minCapacity > elements.length - length) {
-            int newCapacity = elements.length + minCapacity + DEFAULT_CAPACITY;
+            int newCapacity = length + minCapacity + DEFAULT_CAPACITY;
             elements = Arrays.copyOf(elements, newCapacity);
         }
     }
