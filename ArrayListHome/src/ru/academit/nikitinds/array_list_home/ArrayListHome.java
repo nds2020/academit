@@ -1,4 +1,4 @@
-package ru.academit.nikitinsd.array_list_home;
+package ru.academit.nikitinds.array_list_home;
 
 import java.io.*;
 import java.util.*;
