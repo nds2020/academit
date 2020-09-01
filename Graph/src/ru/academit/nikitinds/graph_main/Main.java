@@ -7,6 +7,7 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) {
         Integer[][] matrix1 = new Integer[5][5];
+
         matrix1[0][0] = null;
         matrix1[0][1] = 1;
         matrix1[0][2] = null;
@@ -33,16 +34,18 @@ public class Main {
         matrix1[4][3] = 1;
         matrix1[4][4] = null;
 
-        Integer[][] matrix2 = new Integer[0][0];
-
         MyGraph<Integer> graph1 = new MyGraph<>(matrix1);
-        System.out.println(Arrays.toString(graph1.toArrayByBreadthFirstIteration()));
-        System.out.println(Arrays.toString(graph1.toArrayByDepthFirstIteration()));
 
-        MyGraph<Integer> graph2 = new MyGraph<>(matrix2);
-        System.out.println(Arrays.toString(graph2.toArrayByBreadthFirstIteration()));
+        System.out.println("Обошли в ширину graph1 " + Arrays.toString(graph1.toArrayByBreadthFirstIteration()));
+        System.out.println("Обошли в глубину graph1 " + Arrays.toString(graph1.toArrayByDepthFirstIteration()));
+
+        MyGraph<Integer> graph2 = new MyGraph<>(new Integer[0][0]);
+
+        System.out.println("Обошли в ширину graph2 " + Arrays.toString(graph2.toArrayByBreadthFirstIteration()));
+        System.out.println("Обошли в глубину graph2 " + Arrays.toString(graph2.toArrayByDepthFirstIteration()));
 
         Integer[][] matrix3 = new Integer[7][7];
+
         matrix3[0][0] = null;
         matrix3[0][1] = 1;
         matrix3[0][2] = null;
@@ -94,10 +97,12 @@ public class Main {
         matrix3[6][6] = null;
 
         MyGraph<Integer> graph3 = new MyGraph<>(matrix3);
-        System.out.println(Arrays.toString(graph3.toArrayByBreadthFirstIteration()));
-        System.out.println(Arrays.toString(graph3.toArrayByDepthFirstIteration()));
+
+        System.out.println("Обошли в ширину graph3 " + Arrays.toString(graph3.toArrayByBreadthFirstIteration()));
+        System.out.println("Обошли в глубину graph3 " + Arrays.toString(graph3.toArrayByDepthFirstIteration()));
 
         Integer[][] matrix4 = new Integer[6][6];
+
         matrix4[0][0] = null;
         matrix4[0][1] = null;
         matrix4[0][2] = null;
@@ -136,8 +141,8 @@ public class Main {
         matrix4[5][5] = null;
 
         MyGraph<Integer> graph4 = new MyGraph<>(matrix4);
-        System.out.println(Arrays.toString(graph4.toArrayByBreadthFirstIteration()));
-        System.out.println(Arrays.toString(graph4.toArrayByDepthFirstIteration()));
 
+        System.out.println("Обошли в ширину graph4 " + Arrays.toString(graph4.toArrayByBreadthFirstIteration()));
+        System.out.println("Обошли в глубину graph4 " + Arrays.toString(graph4.toArrayByDepthFirstIteration()));
     }
 }
