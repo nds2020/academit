@@ -10,7 +10,7 @@ public class Person {
         }
 
         if (age <= 0 || age > 100) {
-            throw new IllegalArgumentException("Возраст должен быть больше 0 и меньше 100");
+            throw new IllegalArgumentException("Возраст должен быть в диапазоне от 1 до 100 включительно");
         }
 
         for (int i = 0; i < name.length(); i++) {
