@@ -1,9 +1,9 @@
 package ru.academit.nikitinds.hash_table_main;
 
 import ru.academit.nikitinds.hash_table.MyHashTable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
 
 public class Main {
     public static void main(String[] args) {

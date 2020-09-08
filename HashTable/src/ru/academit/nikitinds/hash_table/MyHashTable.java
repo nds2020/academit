@@ -3,22 +3,22 @@ package ru.academit.nikitinds.hash_table;
 import java.util.*;
 
 public class MyHashTable<E> implements Collection<E> {
-    private final LinkedList<E>[] rows;
+    private final LinkedList<E>[] table;
     private int elementsCount;
     private int modCount;
 
     public MyHashTable() {
         //noinspection unchecked
-        rows = (LinkedList<E>[]) new LinkedList[17];
+        table = (LinkedList<E>[]) new LinkedList[17];
     }
 
     public MyHashTable(int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("Размер таблицы должен быть больше 0");
+            throw new IllegalArgumentException("Аргумент size (размер таблицы) должен быть больше 0. Сейчас size равен " + size);
         }
 
         //noinspection unchecked
-        rows = (LinkedList<E>[]) new LinkedList[size];
+        table = (LinkedList<E>[]) new LinkedList[size];
     }
 
     @Override
@@ -38,13 +38,13 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        int oHash = getHashCode(o);
+        int index = getIndex(o);
 
-        if (rows[oHash] == null) {
+        if (table[index] == null) {
             return false;
         }
 
-        return rows[oHash].contains(o);
+        return table[index].contains(o);
     }
 
     @Override
@@ -67,7 +67,8 @@ public class MyHashTable<E> implements Collection<E> {
         int index = 0;
 
         for (E element : this) {
-            result[index++] = element;
+            result[index] = element;
+            index++;
         }
 
         return result;
@@ -83,7 +84,8 @@ public class MyHashTable<E> implements Collection<E> {
         int index = 0;
 
         for (E element : this) {
-            a[index++] = (T) element;
+            a[index] = (T) element;
+            index++;
         }
 
         if (a.length > elementsCount) {
@@ -95,15 +97,15 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean add(E e) {
-        int eHash = getHashCode(e);
+        int index = getIndex(e);
 
-        if (rows[eHash] == null) {
-            rows[eHash] = new LinkedList<>();
+        if (table[index] == null) {
+            table[index] = new LinkedList<>();
         }
 
         elementsCount++;
         modCount++;
-        return rows[eHash].add(e);
+        return table[index].add(e);
     }
 
     @Override
@@ -123,10 +125,10 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean remove(Object o) {
-        int oHash = getHashCode(o);
+        int index = getIndex(o);
 
-        if (rows[oHash] != null) {
-            if (rows[oHash].remove(o)) {
+        if (table[index] != null) {
+            if (table[index].remove(o)) {
                 elementsCount--;
                 modCount++;
                 return true;
@@ -144,26 +146,25 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
 
-        boolean hasRemove = false;
+        boolean modified = false;
+        boolean[] visitedLists = new boolean[table.length];
 
         for (Object o : c) {
-            int oHash = getHashCode(o);
+            int index = getIndex(o);
 
-            if (rows[oHash] != null) {
-                Iterator<E> iterator = rows[oHash].iterator();
+            if (table[index] != null && table[index].size() != 0 && !visitedLists[index]) {
+                int elementsInListCount = table[index].size();
+                visitedLists[index] = true;
 
-                while (iterator.hasNext()) {
-                    if (Objects.equals(iterator.next(), o)) {
-                        iterator.remove();
-                        elementsCount--;
-                        modCount++;
-                        hasRemove = true;
-                    }
+                if (table[index].removeAll(c)) {
+                    elementsCount -= (elementsInListCount - table[index].size());
+                    modCount++;
+                    modified = true;
                 }
             }
         }
 
-        return hasRemove;
+        return modified;
     }
 
     @Override
@@ -179,35 +180,32 @@ public class MyHashTable<E> implements Collection<E> {
             return true;
         }
 
-        boolean hasRemove = false;
+        boolean modified = false;
 
-        for (LinkedList<E> row : rows) {
-            if (row != null) {
-                Iterator<E> iterator = row.iterator();
+        for (LinkedList<E> list : table) {
+            if (list != null && list.size() != 0) {
+                int elementsInListCount = list.size();
 
-                while (iterator.hasNext()) {
-                    if (!c.contains(iterator.next())) {
-                        iterator.remove();
-                        elementsCount--;
-                        modCount++;
-                        hasRemove = true;
-                    }
+                if (list.retainAll(c)) {
+                    elementsCount -= (elementsInListCount - list.size());
+                    modCount++;
+                    modified = true;
                 }
             }
         }
 
-        return hasRemove;
+        return modified;
     }
 
     @Override
     public void clear() {
-        Arrays.fill(rows, null);
+        Arrays.fill(table, null);
         elementsCount = 0;
         modCount++;
     }
 
-    private int getHashCode(Object o) {
-        return (o == null) ? 0 : Math.abs(o.hashCode() % rows.length);
+    private int getIndex(Object o) {
+        return (o == null) ? 0 : Math.abs(o.hashCode() % table.length);
     }
 
     private static void checkForNull(Object c) {
@@ -217,9 +215,9 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     private class MyHashTableIterator implements Iterator<E> {
-        private int currentFilledRowIndex = -1;
+        private int currentIndex = -1;
         private int visitedElementsCount = 0;
-        private Iterator<E> rowIterator;
+        private Iterator<E> iterator;
         private final int expectedModCount = modCount;
 
         @Override
@@ -237,19 +235,19 @@ public class MyHashTable<E> implements Collection<E> {
                 throw new NoSuchElementException("В таблице больше нет элементов");
             }
 
-            if (currentFilledRowIndex == -1 || !rowIterator.hasNext()) {
-                while (currentFilledRowIndex < rows.length) {
-                    currentFilledRowIndex++;
+            if (currentIndex == -1 || !iterator.hasNext()) {
+                while (currentIndex < table.length) {
+                    currentIndex++;
 
-                    if (rows[currentFilledRowIndex] != null && rows[currentFilledRowIndex].size() != 0) {
-                        rowIterator = rows[currentFilledRowIndex].iterator();
+                    if (table[currentIndex] != null && table[currentIndex].size() != 0) {
+                        iterator = table[currentIndex].iterator();
                         break;
                     }
                 }
             }
 
             visitedElementsCount++;
-            return rowIterator.next();
+            return iterator.next();
         }
     }
 }
