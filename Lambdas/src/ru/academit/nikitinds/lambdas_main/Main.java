@@ -34,30 +34,30 @@ public class Main {
 
         // В) получить список людей младше 18, посчитать для них средний возраст
         // можно так
-        System.out.printf("Средний возраст людей младше 18 лет равен %.2f%n", persons.stream()
+        double averageAge1 = persons.stream()
                 .filter(p -> p.getAge() < 18)
                 .mapToDouble(Person::getAge)
                 .average()
-                .orElse(0)
-        );
+                .orElse(0);
+        System.out.printf("Средний возраст людей младше 18 лет равен %.2f%n", averageAge1);
 
         //либо так
-        System.out.printf("Средний возраст людей младше 18 лет равен %.2f%n", persons.stream()
+        double averageAge2 = persons.stream()
                 .filter(p -> p.getAge() < 18)
-                .collect(Collectors.averagingDouble(Person::getAge))
-        );
+                .collect(Collectors.averagingDouble(Person::getAge));
+        System.out.printf("Средний возраст людей младше 18 лет равен %.2f%n", averageAge2);
 
         // Г) при помощи группировки получить Map, в котором ключи имена, а значения средний возраст
-        System.out.println(persons.stream()
-                .collect(Collectors.groupingBy(Person::getName, Collectors.averagingDouble(Person::getAge)))
-        );
+        Map<String, Double> averageAgenamesByNames = persons.stream()
+                .collect(Collectors.groupingBy(Person::getName, Collectors.averagingDouble(Person::getAge)));
+        System.out.println(averageAgenamesByNames);
 
         // Д) получить людей, возраст которых от 20 до 45, вывести в консоль их имена в порядке убывания возраста
-        System.out.println(persons.stream()
+        String names = persons.stream()
                 .filter(person -> person.getAge() >= 20 && person.getAge() <= 45)
                 .sorted((p1, p2) -> p2.getAge() - p1.getAge())
                 .map(Person::getName)
-                .collect(Collectors.joining(", ", "Имена людей от 20 до 45 лет в порядке убывания возраста: ", "."))
-        );
+                .collect(Collectors.joining(", ", "Имена людей от 20 до 45 лет в порядке убывания возраста: ", "."));
+        System.out.println(names);
     }
 }
