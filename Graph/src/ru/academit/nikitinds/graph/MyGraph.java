@@ -1,68 +1,115 @@
 package ru.academit.nikitinds.graph;
 
-
 import java.util.*;
+import java.util.function.Consumer;
 
-public class MyGraph<T> {
-    private final T[][] edges;
+public class MyGraph {
+    private final int[][] adjacencyMatrix;
 
-    public MyGraph(T[][] edges) {
-        if (edges == null) {
-            throw new IllegalArgumentException("Аргумент не может быть null");
+    public MyGraph(int[][] adjacencyMatrix) {
+        checkForNull(adjacencyMatrix);
+
+        if (adjacencyMatrix.length == 0) {
+            throw new IllegalArgumentException("Количество строк в матрице должно быть больше 0");
         }
 
-        if (edges.length != 0 && edges.length != edges[edges.length - 1].length) {
-            throw new IllegalArgumentException("Аргумент должен быть квадратной матрицей");
+        for (int[] row : adjacencyMatrix) {
+            if (row.length != adjacencyMatrix.length) {
+                throw new IllegalArgumentException("Аргумент должен быть квадратной матрицей");
+            }
         }
 
-        this.edges = edges;
+        this.adjacencyMatrix = adjacencyMatrix;
     }
 
-    public int[] toArrayByBreadthFirstIteration() {
-        int[] array = new int[edges.length];
-        boolean[] visitedVertices = new boolean[edges.length];
-        Queue<Integer> queue = new LinkedList<>();
+    private static <T> void checkForNull(T arg) {
+        if (arg == null) {
+            throw new NullPointerException("Аргумент не может быть null");
+        }
+    }
+
+    public void breadthFirstIteration(Consumer<Integer> consumer) {
+        checkForNull(consumer);
+
+        boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
+
+        Deque<Integer> queue = new ArrayDeque<>(adjacencyMatrix.length);
+
+        int vertex;
 
         for (int i = 0; i < visitedVertices.length; i++) {
             if (!visitedVertices[i]) {
                 queue.add(i);
-                visitedVertices[i] = true;
-            }
 
-            for (int j = 0; j < edges.length; j++) {
-                if (edges[i][j] != null && !visitedVertices[j]) {
-                    queue.add(j);
-                    visitedVertices[j] = true;
+                while (!queue.isEmpty()) {
+                    vertex = queue.remove();
+
+                    if (!visitedVertices[vertex]) {
+                        consumer.accept(vertex);
+                        visitedVertices[vertex] = true;
+
+                        for (int j = 0; j < adjacencyMatrix.length; j++) {
+                            if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
+                                queue.add(j);
+                            }
+                        }
+                    }
                 }
             }
-
-            array[i] = queue.remove();
         }
-
-        return array;
     }
 
-    public int[] toArrayByDepthFirstIteration() {
-        int[] array = new int[edges.length];
-        boolean[] visitedVertices = new boolean[edges.length];
-        Stack<Integer> stack = new Stack<>();
+    public void depthFirstIteration(Consumer<Integer> consumer) {
+        checkForNull(consumer);
+
+        boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
+
+        Deque<Integer> stack = new ArrayDeque<>(adjacencyMatrix.length);
+
+        int vertex;
 
         for (int i = 0; i < visitedVertices.length; i++) {
             if (!visitedVertices[i]) {
                 stack.push(i);
-                visitedVertices[i] = true;
-            }
 
-            array[i] = stack.pop();
+                while (!stack.isEmpty()) {
+                    vertex = stack.pop();
 
-            for (int j = edges.length - 1; j >= 0; j--) {
-                if (edges[i][j] != null && !visitedVertices[j]) {
-                    stack.push(j);
-                    visitedVertices[j] = true;
+                    if (!visitedVertices[vertex]) {
+                        consumer.accept(vertex);
+                        visitedVertices[vertex] = true;
+
+                        for (int j = adjacencyMatrix.length - 1; j >= 0; j--) {
+                            if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
+                                stack.push(j);
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
 
-        return array;
+    public void recurseDepthFirstIteration(Consumer<Integer> consumer) {
+        checkForNull(consumer);
+
+        boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
+
+        for (int i = 0; i < visitedVertices.length; i++) {
+            if (!visitedVertices[i]) {
+                visitVertex(i, visitedVertices, consumer);
+            }
+        }
+    }
+
+    private void visitVertex(int vertex, boolean[] visitedVertices, Consumer<Integer> consumer) {
+        visitedVertices[vertex] = true;
+        consumer.accept(vertex);
+
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            if (!visitedVertices[i] && adjacencyMatrix[vertex][i] != 0) {
+                visitVertex(i, visitedVertices, consumer);
+            }
+        }
     }
 }
