@@ -1,35 +1,36 @@
 package ru.academit.nikitinds.tree_main;
 
-
 import ru.academit.nikitinds.tree.MyTree;
-import ru.academit.nikitinds.tree.MyTreeNode;
 
 public class Main {
     public static void main(String[] args) {
-        MyTree<Integer> tree1 = new MyTree<>(Integer::compareTo);
+        MyTree<Integer> integersTree = new MyTree<>();
 
-        tree1.add(new MyTreeNode<>(10));
-        tree1.add(new MyTreeNode<>(8));
-        tree1.add(new MyTreeNode<>(12));
-        tree1.add(new MyTreeNode<>(7));
-        tree1.add(new MyTreeNode<>(11));
-        tree1.add(new MyTreeNode<>(13));
-        tree1.add(new MyTreeNode<>(5));
-        tree1.add(new MyTreeNode<>(16));
-        tree1.add(new MyTreeNode<>(15));
+        integersTree.add(null);
+        integersTree.add(8);
+        integersTree.add(12);
+        integersTree.add(7);
+        integersTree.add(11);
+        integersTree.add(null);
+        integersTree.add(5);
+        integersTree.add(16);
+        integersTree.add(15);
 
         System.out.println("Обошли дерево в ширину:");
-        System.out.println(tree1.toArrayListByBreadthFirstIteration());
+        integersTree.breadthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
 
         System.out.println("Обошли дерево в глубину:");
-        System.out.println(tree1.toArrayListByDepthFirstIteration());
+        integersTree.depthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
 
         System.out.println("Обошли дерево в глубину рекурсивно:");
-        System.out.println(tree1.toArrayListByRecurseDepthFirstIteration());
+        integersTree.recurseDepthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
         System.out.println();
 
         int number = 3;
-        if (tree1.contains(number)) {
+        if (integersTree.contains(number)) {
             System.out.println("Дерево содержит число " + number);
         } else {
             System.out.println("Дерево не содержит число " + number);
@@ -37,35 +38,48 @@ public class Main {
 
         System.out.println();
 
-        System.out.println("Количество элементов в дереве равно: " + tree1.size());
+        System.out.println("Количество элементов в дереве равно: " + integersTree.size());
         number = 15;
-        tree1.remove(number);
+        integersTree.remove(number);
         System.out.println("Удалили число " + number + " - лист дерева");
-        System.out.println("Обошли дерево в ширину: " + tree1.toArrayListByBreadthFirstIteration());
-        System.out.println("Количество элементов в дереве равно: " + tree1.size());
+        System.out.println("Обошли дерево в ширину:");
+        integersTree.breadthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
+        System.out.println("Количество элементов в дереве равно: " + integersTree.size());
         System.out.println();
 
         number = 7;
-        tree1.remove(number);
+        integersTree.remove(number);
         System.out.println("Удалили число " + number + " - узел с 1 ребенком");
-        System.out.println("Вновь обошли дерево в ширину: " + tree1.toArrayListByBreadthFirstIteration());
-        System.out.println("Количество элементов в дереве равно: " + tree1.size());
+        System.out.println("Вновь обошли дерево в ширину:");
+        integersTree.breadthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
+        System.out.println("Количество элементов в дереве равно: " + integersTree.size());
         System.out.println();
 
         number = 12;
-        tree1.remove(number);
+        integersTree.remove(number);
         System.out.println("Удалили число " + number + " - узел с 2 детьми");
-        System.out.println("Вновь обошли дерево в ширину: " + tree1.toArrayListByBreadthFirstIteration());
-        System.out.println("Количество элементов в дереве равно: " + tree1.size());
+        System.out.println("Вновь обошли дерево в ширину:");
+        integersTree.breadthFirstIteration(integer -> System.out.printf("%d ", integer));
+        System.out.println();
+        System.out.println("Количество элементов в дереве равно: " + integersTree.size());
         System.out.println();
 
-        MyTree<String> tree2 = new MyTree<>(new MyTreeNode<>("abcd"), String::lastIndexOf);
+        MyTree<String> stringsTree = new MyTree<>(String::compareToIgnoreCase);
 
-        tree2.add(new MyTreeNode<>("abc"));
-        tree2.add(new MyTreeNode<>("abcde"));
-        tree2.add(new MyTreeNode<>("ab"));
-        tree2.add(new MyTreeNode<>("abcdef"));
+        stringsTree.add("abcd");
+        stringsTree.add(null);
+        stringsTree.add("abCde");
+        stringsTree.add("ab");
+        stringsTree.add("abcDef");
+        stringsTree.add(null);
 
-        System.out.println("Создали дерево строк и обошли его в ширину " + tree2.toArrayListByBreadthFirstIteration());
+        System.out.println("Создали дерево строк и обошли его в ширину:");
+        stringsTree.breadthFirstIteration(string -> System.out.printf("%s ", string));
+        System.out.println();
+        System.out.println("Обошли дерево строк в глубину:");
+        stringsTree.depthFirstIteration(string -> System.out.printf("%s ", string));
+        System.out.println();
     }
 }

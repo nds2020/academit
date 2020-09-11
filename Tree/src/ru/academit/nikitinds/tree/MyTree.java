@@ -1,20 +1,24 @@
 package ru.academit.nikitinds.tree;
 
-
 import java.util.*;
+import java.util.function.Consumer;
 
-public class MyTree<T> {
+public class MyTree<T extends Comparable<T>> {
     private final Comparator<T> comparator;
     private MyTreeNode<T> root;
     private int nodesCount;
 
-    public MyTree(Comparator<T> comparator) {
-        this.comparator = comparator;
+    public MyTree() {
+        comparator = Comparator.nullsFirst(Comparator.naturalOrder());
     }
 
-    public MyTree(MyTreeNode<T> root, Comparator<T> comparator) {
-        this.root = root;
-        this.comparator = comparator;
+    public MyTree(Comparator<T> comparator) {
+        this.comparator = Comparator.nullsFirst(comparator);
+    }
+
+    public MyTree(T data, Comparator<T> comparator) {
+        this.root = new MyTreeNode<>(data);
+        this.comparator = Comparator.nullsFirst(comparator);
         nodesCount++;
     }
 
@@ -22,10 +26,8 @@ public class MyTree<T> {
         return nodesCount;
     }
 
-    public boolean add(MyTreeNode<T> node) {
-        if (node == null) {
-            throw new IllegalArgumentException("Аргумент не может быть null");
-        }
+    public boolean add(T data) {
+        MyTreeNode<T> node = new MyTreeNode<>(data);
 
         if (root == null) {
             root = node;
@@ -55,7 +57,6 @@ public class MyTree<T> {
             break;
         }
 
-        node.setParent(parent);
         nodesCount++;
         return true;
     }
@@ -65,18 +66,16 @@ public class MyTree<T> {
             return false;
         }
 
-        return findNode(data) != null;
-    }
-
-    private MyTreeNode<T> findNode(T data) {
         MyTreeNode<T> node = root;
 
         while (true) {
-            if (comparator.compare(data, node.getData()) == 0) {
-                return node;
+            int compareResult = comparator.compare(data, node.getData());
+
+            if (compareResult == 0) {
+                return true;
             }
 
-            if (comparator.compare(data, node.getData()) < 0) {
+            if (compareResult < 0) {
                 if (node.getLeftChild() != null) {
                     node = node.getLeftChild();
                     continue;
@@ -88,7 +87,7 @@ public class MyTree<T> {
                 }
             }
 
-            return null;
+            return false;
         }
     }
 
@@ -97,50 +96,90 @@ public class MyTree<T> {
             return false;
         }
 
-        MyTreeNode<T> removedNode = findNode(data);
+        MyTreeNode<T> removedNodeParent = null;
+        MyTreeNode<T> removedNode = root;
+        boolean removedNodeSide = false; // false - удаляемый узел относится к левому поддереву, true - к правому
+
+        while (true) {
+            int compareResult = comparator.compare(data, removedNode.getData());
+
+            if (compareResult == 0) {
+                break;
+            }
+
+            if (compareResult < 0) {
+                if (removedNode.getLeftChild() != null) {
+                    removedNodeParent = removedNode;
+                    removedNode = removedNode.getLeftChild();
+                    removedNodeSide = false;
+                    continue;
+                }
+            } else {
+                if (removedNode.getRightChild() != null) {
+                    removedNodeParent = removedNode;
+                    removedNode = removedNode.getRightChild();
+                    removedNodeSide = true;
+                    continue;
+                }
+            }
+
+            removedNode = null;
+            break;
+        }
 
         if (removedNode == null) {
             return false;
         }
 
+        /*Если в строке 144 вместо такого условия использовать removedNode == root, то в строке 150 будет warning,
+          что возможен NullPointerExeption. Такой же warning будет во всех ветках ниже, где вместо условия
+          removedNodeParent == null будет использовано removedNode == root.
+          Не могу понять - почему?
+          Ведь если removedNode != root, его родитель никак не может быть null (он получит ссылку на узел в цикле выше)
+          Родитель может остаться null лишь в одном случае - если у дерева есть только корень и данные в нем не равны
+          удаляемым (то есть будут проверены условия в строках 106, 110, 111 или 118, они все дадут false, отработаю строки 126 и 127).
+          Но тогда код выйдет из метода еще на строке 131.
+          Для примера оставил warning в стоке 160*/
         if (removedNode.getLeftChild() == null && removedNode.getRightChild() == null) {
-            if (removedNode == root) {
+            if (removedNodeParent == null) {
                 root = null;
             } else {
-                if (comparator.compare(data, removedNode.getParent().getData()) < 0) {
-                    removedNode.getParent().setLeftChild(null);
+                if (removedNodeSide) {
+                    removedNodeParent.setRightChild(null);
                 } else {
-                    removedNode.getParent().setRightChild(null);
+                    removedNodeParent.setLeftChild(null);
                 }
             }
         } else if (removedNode.getLeftChild() == null) {
-            if (removedNode == root) {
+            if (removedNode == root) { // чтобы пропал warning, условие нужно изменить на removedNodeParent == null
                 root = root.getRightChild();
             } else {
-                if (comparator.compare(data, removedNode.getParent().getData()) < 0) {
-                    removedNode.getParent().setLeftChild(removedNode.getRightChild());
+                if (removedNodeSide) {
+                    removedNodeParent.setRightChild(removedNode.getRightChild());
                 } else {
-                    removedNode.getParent().setRightChild(removedNode.getRightChild());
+                    removedNodeParent.setLeftChild(removedNode.getRightChild()); // warning оставил для примера
                 }
             }
-            removedNode.getRightChild().setParent(removedNode.getParent());
         } else if (removedNode.getRightChild() == null) {
-            if (removedNode == root) {
+            if (removedNodeParent == null) {
                 root = root.getLeftChild();
             } else {
-                if (comparator.compare(data, removedNode.getParent().getData()) < 0) {
-                    removedNode.getParent().setLeftChild(removedNode.getLeftChild());
+                if (removedNodeSide) {
+                    removedNodeParent.setRightChild(removedNode.getLeftChild());
                 } else {
-                    removedNode.getParent().setRightChild(removedNode.getLeftChild());
+                    removedNodeParent.setLeftChild(removedNode.getLeftChild());
                 }
             }
-            removedNode.getLeftChild().setParent(removedNode.getParent());
         } else {
             MyTreeNode<T> minNode = removedNode.getRightChild();
+            MyTreeNode<T> minNodeParent = removedNode;
+            boolean minNodeSide = true;
 
             while (true) {
                 if (minNode.getLeftChild() != null) {
+                    minNodeParent = minNode;
                     minNode = minNode.getLeftChild();
+                    minNodeSide = false;
                     continue;
                 }
 
@@ -148,32 +187,29 @@ public class MyTree<T> {
             }
 
             if (minNode.getRightChild() == null) {
-                if (comparator.compare(data, minNode.getParent().getData()) < 0) {
-                    minNode.getParent().setLeftChild(null);
+                if (minNodeSide) {
+                    minNodeParent.setRightChild(null);
                 } else {
-                    minNode.getParent().setRightChild(null);
+                    minNodeParent.setLeftChild(null);
                 }
             } else {
-                if (comparator.compare(data, minNode.getParent().getData()) < 0) {
-                    minNode.getParent().setLeftChild(minNode.getRightChild());
+                if (minNodeSide) {
+                    minNodeParent.setRightChild(minNode.getRightChild());
                 } else {
-                    minNode.getParent().setRightChild(minNode.getRightChild());
+                    minNodeParent.setLeftChild(minNode.getRightChild());
                 }
-
-                minNode.getRightChild().setParent(minNode.getParent());
             }
 
             minNode.setLeftChild(removedNode.getLeftChild());
             minNode.setRightChild(removedNode.getRightChild());
-            minNode.setParent(removedNode.getParent());
 
-            if (removedNode == root) {
+            if (removedNodeParent == null) {
                 root = minNode;
             } else {
-                if (comparator.compare(data, removedNode.getParent().getData()) < 0) {
-                    removedNode.getParent().setLeftChild(minNode);
+                if (removedNodeSide) {
+                    removedNodeParent.setRightChild(minNode);
                 } else {
-                    removedNode.getParent().setRightChild(minNode);
+                    removedNodeParent.setLeftChild(minNode);
                 }
             }
         }
@@ -182,68 +218,79 @@ public class MyTree<T> {
         return true;
     }
 
-    public ArrayList<T> toArrayListByBreadthFirstIteration() {
-        ArrayList<T> arrayList = new ArrayList<>(nodesCount);
+    public void breadthFirstIteration(Consumer<T> consumer) {
+        checkForNull(consumer);
 
-        Queue<MyTreeNode<T>> nodes = new LinkedList<>();
+        Deque<MyTreeNode<T>> queue = new ArrayDeque<>(nodesCount);
 
-        nodes.add(root);
-
-        while (!nodes.isEmpty()) {
-            if (nodes.element().getLeftChild() != null) {
-                nodes.add(nodes.element().getLeftChild());
-            }
-
-            if (nodes.element().getRightChild() != null) {
-                nodes.add(nodes.element().getRightChild());
-            }
-
-            arrayList.add(nodes.remove().getData());
+        if (root != null) {
+            queue.add(root);
         }
 
-        return arrayList;
+        MyTreeNode<T> node;
+
+        while (!queue.isEmpty()) {
+            node = queue.remove();
+            consumer.accept(node.getData());
+
+            if (node.getLeftChild() != null) {
+                queue.add(node.getLeftChild());
+            }
+
+            if (node.getRightChild() != null) {
+                queue.add(node.getRightChild());
+            }
+        }
     }
 
-    public ArrayList<T> toArrayListByDepthFirstIteration() {
-        ArrayList<T> arrayList = new ArrayList<>(nodesCount);
+    public void depthFirstIteration(Consumer<T> consumer) {
+        checkForNull(consumer);
 
-        Stack<MyTreeNode<T>> nodes = new Stack<>();
+        Deque<MyTreeNode<T>> stack = new ArrayDeque<>(nodesCount);
 
-        nodes.push(root);
+        if (root != null) {
+            stack.push(root);
+        }
+
         MyTreeNode<T> topNode;
 
-        while (!nodes.empty()) {
-            topNode = nodes.pop();
-            arrayList.add(topNode.getData());
+        while (!stack.isEmpty()) {
+            topNode = stack.pop();
+            consumer.accept(topNode.getData());
 
             if (topNode.getRightChild() != null) {
-                nodes.push(topNode.getRightChild());
+                stack.push(topNode.getRightChild());
             }
 
             if (topNode.getLeftChild() != null) {
-                nodes.push(topNode.getLeftChild());
+                stack.push(topNode.getLeftChild());
             }
         }
-
-        return arrayList;
     }
 
-    public ArrayList<T> toArrayListByRecurseDepthFirstIteration() {
-        ArrayList<T> arrayList = new ArrayList<>(nodesCount);
+    public void recurseDepthFirstIteration(Consumer<T> consumer) {
+        checkForNull(consumer);
 
-        visitNodes(root, arrayList);
-        return arrayList;
+        if (root != null) {
+            visitNodes(root, consumer);
+        }
     }
 
-    private void visitNodes(MyTreeNode<T> node, ArrayList<T> arrayList) {
-        arrayList.add(node.getData());
+    private void visitNodes(MyTreeNode<T> node, Consumer<T> consumer) {
+        consumer.accept(node.getData());
 
         if (node.getLeftChild() != null) {
-            visitNodes(node.getLeftChild(), arrayList);
+            visitNodes(node.getLeftChild(), consumer);
         }
 
         if (node.getRightChild() != null) {
-            visitNodes(node.getRightChild(), arrayList);
+            visitNodes(node.getRightChild(), consumer);
+        }
+    }
+
+    private static void checkForNull(Object o) {
+        if (o == null) {
+            throw new NullPointerException("Аргумент не может быть null");
         }
     }
 }

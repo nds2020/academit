@@ -22,7 +22,7 @@ public class MyGraph {
         this.adjacencyMatrix = adjacencyMatrix;
     }
 
-    private static <T> void checkForNull(T arg) {
+    private static void checkForNull(Object arg) {
         if (arg == null) {
             throw new NullPointerException("Аргумент не может быть null");
         }
