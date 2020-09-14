@@ -40,8 +40,8 @@ public class Person {
             throw new IllegalArgumentException("Имя не может быть null");
         }
 
-        if (!Character.isLetter(name.charAt(0)) || Character.isLowerCase(name.charAt(0))
-                || (Character.getNumericValue(name.charAt(0)) >= 10 && Character.getNumericValue(name.charAt(0)) <= 35)) {
+        if (!Character.isLetter(name.charAt(0)) || Character.isLowerCase(name.charAt(0)) ||
+                (Character.getNumericValue(name.charAt(0)) >= 10 && Character.getNumericValue(name.charAt(0)) <= 35)) {
             throw new IllegalArgumentException("Первая буква в имени должна быть заглавной и имя должно состоять только из букв русского алфавита");
         }
 

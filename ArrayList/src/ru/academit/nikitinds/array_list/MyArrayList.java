@@ -3,19 +3,18 @@ package ru.academit.nikitinds.array_list;
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
-    private static final int DEFAULT_CAPACITY = 10;
     private E[] elements;
     private int length;
     private int modCount;
 
     public MyArrayList() {
         //noinspection unchecked
-        elements = (E[]) new Object[DEFAULT_CAPACITY];
+        elements = (E[]) new Object[10];
     }
 
     public MyArrayList(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("Вместимость списка не может быть меньше 0");
+            throw new IllegalArgumentException("Вместимость не может быть меньше 0, сейчас она равна " + initialCapacity);
         }
 
         //noinspection unchecked
@@ -23,31 +22,27 @@ public class MyArrayList<E> implements List<E> {
     }
 
     public MyArrayList(Collection<? extends E> c) {
+        checkForNull(c);
+
         if (c.size() != 0) {
             //noinspection unchecked
             elements = (E[]) c.toArray();
             length = c.size();
         } else {
             //noinspection unchecked
-            elements = (E[]) new Object[DEFAULT_CAPACITY];
+            elements = (E[]) new Object[10];
         }
     }
 
     @Override
     public E get(int index) {
-        if (index < 0 || index >= length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " вышел за границы индексов списка. Размер списка " + length);
-        }
-
+        checkIndex(index);
         return elements[index];
     }
 
     @Override
     public E set(int index, E element) {
-        if (index < 0 || index >= length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " вышел за границы индексов списка. Размер списка " + length);
-        }
-
+        checkIndex(index);
         E oldElement = elements[index];
         elements[index] = element;
         return oldElement;
@@ -74,9 +69,8 @@ public class MyArrayList<E> implements List<E> {
     }
 
     public void ensureCapacity(int minCapacity) {
-        if (minCapacity > elements.length - length) {
-            int newCapacity = length + minCapacity + DEFAULT_CAPACITY;
-            elements = Arrays.copyOf(elements, newCapacity);
+        if (minCapacity > elements.length) {
+            elements = Arrays.copyOf(elements, minCapacity);
         }
     }
 
@@ -113,21 +107,26 @@ public class MyArrayList<E> implements List<E> {
         return true;
     }
 
+    private E[] growWithShift(int capacity, int shiftStartIndex, int shiftedElementsCount) {
+        //noinspection unchecked
+        E[] result = (E[]) new Object[capacity];
+
+        System.arraycopy(elements, 0, result, 0, shiftStartIndex);
+        System.arraycopy(elements, shiftStartIndex, result, shiftStartIndex + shiftedElementsCount, length - shiftStartIndex);
+        return result;
+    }
+
     @Override
     public void add(int index, E element) {
-        if (index < 0 || index > length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + length);
-        }
+        checkIndexForAdd(index);
 
-        ensureCapacity(1);
-
-        if (index == length) {
-            elements[length] = element;
+        if (length + 1 > elements.length) {
+            elements = growWithShift(elements.length * 2, index, 1);
         } else {
             System.arraycopy(elements, index, elements, index + 1, length - index);
-            elements[index] = element;
         }
 
+        elements[index] = element;
         length++;
         modCount++;
     }
@@ -140,25 +139,25 @@ public class MyArrayList<E> implements List<E> {
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         checkForNull(c);
+        checkIndexForAdd(index);
 
         if (c.size() == 0) {
             return false;
         }
-        
-        if (index < 0 || index > length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + length);
-        }
 
-        ensureCapacity(c.size());
+        int minCapacity = length + c.size();
 
-        if (index != length) {
+        if (minCapacity > elements.length) {
+            elements = growWithShift(minCapacity, index, c.size());
+        } else {
             System.arraycopy(elements, index, elements, index + c.size(), length - index);
         }
 
-        int temp = index;
+        int indexOfPlaceForAdd = index;
 
         for (E element : c) {
-            elements[temp++] = element;
+            elements[indexOfPlaceForAdd] = element;
+            indexOfPlaceForAdd++;
         }
 
         length += c.size();
@@ -182,10 +181,7 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-        if (index < 0 || index >= length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " вышел за границы индексов списка. Размер списка " + length);
-        }
-
+        checkIndex(index);
         E removedElement = elements[index];
         fastRemove(index);
         length--;
@@ -219,7 +215,7 @@ public class MyArrayList<E> implements List<E> {
     public boolean retainAll(Collection<?> c) {
         checkForNull(c);
 
-        if (c.size() == 0) {
+        if (length != 0 && c.size() == 0) {
             clear();
             return true;
         }
@@ -328,7 +324,19 @@ public class MyArrayList<E> implements List<E> {
 
     private static void checkForNull(Object o) {
         if (o == null) {
-            throw new NullPointerException("Коллекция-аргумент не должна быть null");
+            throw new NullPointerException("Коллекция-аргумент не может быть null");
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= length) {
+            throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + (length - 1) + " включительно");
+        }
+    }
+
+    private void checkIndexForAdd(int index) {
+        if (index < 0 || index > length) {
+            throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + length + " включительно");
         }
     }
 

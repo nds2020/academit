@@ -1,6 +1,7 @@
 package ru.academit.nikitinds.array_list_main;
 
 import ru.academit.nikitinds.array_list.MyArrayList;
+
 import java.util.Arrays;
 
 public class Main {
@@ -25,7 +26,7 @@ public class Main {
         System.out.println();
 
         strings.add("Hello");
-        strings.add(strings.size(), "World!");
+        strings.add(1, "World!");
         System.out.println("Добавили элементы в strings: " + strings);
         System.out.println();
 
@@ -71,7 +72,7 @@ public class Main {
 
         int number = 4;
         System.out.println("Число " + number + " впервые встречается в integers по индексу " + integers.indexOf(number));
-        System.out.println("Число " + number + " в последний раз встречается в integers по индексу " + integers.lastIndexOf(number));
+        System.out.println("Число " + number + " последний раз встречается в integers по индексу " + integers.lastIndexOf(number));
         System.out.println();
 
         if (!integers.isEmpty()) {

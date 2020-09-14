@@ -48,9 +48,9 @@ public class Main {
         System.out.printf("Средний возраст людей младше 18 лет равен %.2f%n", averageAge2);
 
         // Г) при помощи группировки получить Map, в котором ключи имена, а значения средний возраст
-        Map<String, Double> averageAgenamesByNames = persons.stream()
+        Map<String, Double> averageAgeByNames = persons.stream()
                 .collect(Collectors.groupingBy(Person::getName, Collectors.averagingDouble(Person::getAge)));
-        System.out.println(averageAgenamesByNames);
+        System.out.println(averageAgeByNames);
 
         // Д) получить людей, возраст которых от 20 до 45, вывести в консоль их имена в порядке убывания возраста
         String names = persons.stream()
