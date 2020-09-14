@@ -121,7 +121,7 @@ public class MyArrayList<E> implements List<E> {
         checkIndexForAdd(index);
 
         if (length + 1 > elements.length) {
-            elements = growWithShift(elements.length * 2, index, 1);
+            elements = growWithShift(elements.length * 2 + 1, index, 1);
         } else {
             System.arraycopy(elements, index, elements, index + 1, length - index);
         }
