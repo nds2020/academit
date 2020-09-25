@@ -3,13 +3,14 @@ package ru.academit.nikitinds.array_list;
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 10;
     private E[] elements;
     private int length;
     private int modCount;
 
     public MyArrayList() {
         //noinspection unchecked
-        elements = (E[]) new Object[10];
+        elements = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     public MyArrayList(int initialCapacity) {
@@ -30,7 +31,7 @@ public class MyArrayList<E> implements List<E> {
             length = c.size();
         } else {
             //noinspection unchecked
-            elements = (E[]) new Object[10];
+            elements = (E[]) new Object[DEFAULT_CAPACITY];
         }
     }
 
@@ -70,7 +71,7 @@ public class MyArrayList<E> implements List<E> {
 
     public void ensureCapacity(int minCapacity) {
         if (minCapacity > elements.length) {
-            elements = Arrays.copyOf(elements, minCapacity);
+            grow(minCapacity);
         }
     }
 
@@ -107,28 +108,27 @@ public class MyArrayList<E> implements List<E> {
         return true;
     }
 
-    private E[] growWithShift(int capacity, int shiftStartIndex, int shiftedElementsCount) {
-        //noinspection unchecked
-        E[] result = (E[]) new Object[capacity];
-
-        System.arraycopy(elements, 0, result, 0, shiftStartIndex);
-        System.arraycopy(elements, shiftStartIndex, result, shiftStartIndex + shiftedElementsCount, length - shiftStartIndex);
-        return result;
-    }
-
     @Override
     public void add(int index, E element) {
         checkIndexForAdd(index);
 
-        if (length + 1 > elements.length) {
-            elements = growWithShift(elements.length * 2 + 1, index, 1);
-        } else {
-            System.arraycopy(elements, index, elements, index + 1, length - index);
+        if (length == elements.length) {
+            grow(length + 1);
         }
 
+        System.arraycopy(elements, index, elements, index + 1, length - index);
         elements[index] = element;
         length++;
         modCount++;
+    }
+
+    private void grow(int capacity) {
+        if (elements.length > 0) {
+            elements = Arrays.copyOf(elements, Math.max(capacity, elements.length * 2));
+        } else {
+            //noinspection unchecked
+            elements = (E[]) new Object[Math.max(DEFAULT_CAPACITY, capacity)];
+        }
     }
 
     @Override
@@ -145,19 +145,13 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
 
-        int minCapacity = length + c.size();
-
-        if (minCapacity > elements.length) {
-            elements = growWithShift(minCapacity, index, c.size());
-        } else {
-            System.arraycopy(elements, index, elements, index + c.size(), length - index);
-        }
-
-        int indexOfPlaceForAdd = index;
+        ensureCapacity(length + c.size());
+        System.arraycopy(elements, index, elements, index + c.size(), length - index);
+        int i = index;
 
         for (E element : c) {
-            elements[indexOfPlaceForAdd] = element;
-            indexOfPlaceForAdd++;
+            elements[i] = element;
+            i++;
         }
 
         length += c.size();
@@ -328,9 +322,10 @@ public class MyArrayList<E> implements List<E> {
         }
     }
 
+
     private void checkIndex(int index) {
         if (index < 0 || index >= length) {
-            throw new IndexOutOfBoundsException("Индекс " + index + " должен быть в диапазоне от 0 до " + (length - 1) + " включительно");
+            throw new IndexOutOfBoundsException("Индекс " + index + " вышел за границы допустимых значений. Резмер списка равен " + length);
         }
     }
 

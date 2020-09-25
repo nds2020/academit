@@ -13,12 +13,12 @@ public class MyTree<T extends Comparable<T>> {
     }
 
     public MyTree(Comparator<T> comparator) {
-        this.comparator = Comparator.nullsFirst(comparator);
+        this.comparator = (comparator == null) ? Comparator.nullsFirst(Comparator.naturalOrder()) : Comparator.nullsFirst(comparator);
     }
 
     public MyTree(T data, Comparator<T> comparator) {
         this.root = new MyTreeNode<>(data);
-        this.comparator = Comparator.nullsFirst(comparator);
+        this.comparator = (comparator == null) ? Comparator.nullsFirst(Comparator.naturalOrder()) : Comparator.nullsFirst(comparator);
         nodesCount++;
     }
 
@@ -62,7 +62,7 @@ public class MyTree<T extends Comparable<T>> {
     }
 
     public boolean contains(T data) {
-        if (data == null || root == null) {
+        if (root == null) {
             return false;
         }
 
@@ -92,13 +92,13 @@ public class MyTree<T extends Comparable<T>> {
     }
 
     public boolean remove(T data) {
-        if (data == null || root == null) {
+        if (root == null) {
             return false;
         }
 
         MyTreeNode<T> removedNodeParent = null;
         MyTreeNode<T> removedNode = root;
-        boolean removedNodeSide = false; // false - удаляемый узел относится к левому поддереву, true - к правому
+        boolean belongRemovedNodeToRightSubtree = false;
 
         while (true) {
             int compareResult = comparator.compare(data, removedNode.getData());
@@ -111,14 +111,14 @@ public class MyTree<T extends Comparable<T>> {
                 if (removedNode.getLeftChild() != null) {
                     removedNodeParent = removedNode;
                     removedNode = removedNode.getLeftChild();
-                    removedNodeSide = false;
+                    belongRemovedNodeToRightSubtree = false;
                     continue;
                 }
             } else {
                 if (removedNode.getRightChild() != null) {
                     removedNodeParent = removedNode;
                     removedNode = removedNode.getRightChild();
-                    removedNodeSide = true;
+                    belongRemovedNodeToRightSubtree = true;
                     continue;
                 }
             }
@@ -131,40 +131,31 @@ public class MyTree<T extends Comparable<T>> {
             return false;
         }
 
-        /*Если в строке 144 вместо такого условия использовать removedNode == root, то в строке 150 будет warning,
-          что возможен NullPointerExeption. Такой же warning будет во всех ветках ниже, где вместо условия
-          removedNodeParent == null будет использовано removedNode == root.
-          Не могу понять - почему?
-          Ведь если removedNode != root, его родитель никак не может быть null (он получит ссылку на узел в цикле выше)
-          Родитель может остаться null лишь в одном случае - если у дерева есть только корень и данные в нем не равны
-          удаляемым (то есть будут проверены условия в строках 106, 110, 111 или 118, они все дадут false, отработаю строки 126 и 127).
-          Но тогда код выйдет из метода еще на строке 131.
-          Для примера оставил warning в стоке 160*/
         if (removedNode.getLeftChild() == null && removedNode.getRightChild() == null) {
             if (removedNodeParent == null) {
                 root = null;
             } else {
-                if (removedNodeSide) {
+                if (belongRemovedNodeToRightSubtree) {
                     removedNodeParent.setRightChild(null);
                 } else {
                     removedNodeParent.setLeftChild(null);
                 }
             }
         } else if (removedNode.getLeftChild() == null) {
-            if (removedNode == root) { // чтобы пропал warning, условие нужно изменить на removedNodeParent == null
+            if (removedNodeParent == null) {
                 root = root.getRightChild();
             } else {
-                if (removedNodeSide) {
+                if (belongRemovedNodeToRightSubtree) {
                     removedNodeParent.setRightChild(removedNode.getRightChild());
                 } else {
-                    removedNodeParent.setLeftChild(removedNode.getRightChild()); // warning оставил для примера
+                    removedNodeParent.setLeftChild(removedNode.getRightChild());
                 }
             }
         } else if (removedNode.getRightChild() == null) {
             if (removedNodeParent == null) {
                 root = root.getLeftChild();
             } else {
-                if (removedNodeSide) {
+                if (belongRemovedNodeToRightSubtree) {
                     removedNodeParent.setRightChild(removedNode.getLeftChild());
                 } else {
                     removedNodeParent.setLeftChild(removedNode.getLeftChild());
@@ -206,7 +197,7 @@ public class MyTree<T extends Comparable<T>> {
             if (removedNodeParent == null) {
                 root = minNode;
             } else {
-                if (removedNodeSide) {
+                if (belongRemovedNodeToRightSubtree) {
                     removedNodeParent.setRightChild(minNode);
                 } else {
                     removedNodeParent.setLeftChild(minNode);
@@ -221,12 +212,13 @@ public class MyTree<T extends Comparable<T>> {
     public void breadthFirstIteration(Consumer<T> consumer) {
         checkForNull(consumer);
 
-        Deque<MyTreeNode<T>> queue = new ArrayDeque<>(nodesCount);
-
-        if (root != null) {
-            queue.add(root);
+        if (root == null) {
+            return;
         }
 
+        Queue<MyTreeNode<T>> queue = new ArrayDeque<>(nodesCount);
+
+        queue.add(root);
         MyTreeNode<T> node;
 
         while (!queue.isEmpty()) {
@@ -246,12 +238,13 @@ public class MyTree<T extends Comparable<T>> {
     public void depthFirstIteration(Consumer<T> consumer) {
         checkForNull(consumer);
 
-        Deque<MyTreeNode<T>> stack = new ArrayDeque<>(nodesCount);
-
-        if (root != null) {
-            stack.push(root);
+        if (root == null) {
+            return;
         }
 
+        Deque<MyTreeNode<T>> stack = new ArrayDeque<>(nodesCount);
+
+        stack.push(root);
         MyTreeNode<T> topNode;
 
         while (!stack.isEmpty()) {

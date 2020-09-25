@@ -2,12 +2,9 @@ package ru.academit.nikitinds.graph_main;
 
 import ru.academit.nikitinds.graph.MyGraph;
 
-import java.util.Arrays;
-
 public class Main {
     public static void main(String[] args) {
         int[][] matrix1 = {{0, 1, 0, 1}, {1, 0, 0, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}};
-        System.out.println(Arrays.deepToString(matrix1));
 
         MyGraph graph1 = new MyGraph(matrix1);
 

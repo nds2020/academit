@@ -146,25 +146,25 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
 
-        boolean modified = false;
-        boolean[] visitedLists = new boolean[table.length];
+        boolean wasModified = false;
+        boolean[] wasVisited = new boolean[table.length];
 
         for (Object o : c) {
             int index = getIndex(o);
 
-            if (table[index] != null && table[index].size() != 0 && !visitedLists[index]) {
-                int elementsInListCount = table[index].size();
-                visitedLists[index] = true;
+            if (table[index] != null && table[index].size() != 0 && !wasVisited[index]) {
+                int initialElementsCount = table[index].size();
+                wasVisited[index] = true;
 
                 if (table[index].removeAll(c)) {
-                    elementsCount -= (elementsInListCount - table[index].size());
+                    elementsCount -= (initialElementsCount - table[index].size());
                     modCount++;
-                    modified = true;
+                    wasModified = true;
                 }
             }
         }
 
-        return modified;
+        return wasModified;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class MyHashTable<E> implements Collection<E> {
             return true;
         }
 
-        boolean modified = false;
+        boolean wasModified = false;
 
         for (LinkedList<E> list : table) {
             if (list != null && list.size() != 0) {
@@ -189,12 +189,12 @@ public class MyHashTable<E> implements Collection<E> {
                 if (list.retainAll(c)) {
                     elementsCount -= (elementsInListCount - list.size());
                     modCount++;
-                    modified = true;
+                    wasModified = true;
                 }
             }
         }
 
-        return modified;
+        return wasModified;
     }
 
     @Override

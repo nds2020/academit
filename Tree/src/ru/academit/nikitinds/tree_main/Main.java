@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         MyTree<Integer> integersTree = new MyTree<>();
 
-        integersTree.add(null);
+        integersTree.add(9);
         integersTree.add(8);
         integersTree.add(12);
         integersTree.add(7);

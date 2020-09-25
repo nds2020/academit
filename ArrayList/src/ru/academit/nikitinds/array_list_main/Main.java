@@ -8,11 +8,15 @@ public class Main {
     public static void main(String[] args) {
         MyArrayList<Integer> integers = new MyArrayList<>(Arrays.asList(1, 2, 3, 4));
         MyArrayList<String> strings = new MyArrayList<>();
-        MyArrayList<Number> numbers = new MyArrayList<>(5);
+        MyArrayList<Number> numbers = new MyArrayList<>(0);
 
         System.out.println("Список integers: " + integers);
+        System.out.println("Размер integers равен " + integers.size() + ", вместимость integers равна " + integers.capacity());
         System.out.println("Список strings: " + strings);
+        System.out.println("Вместимость strings равна " + strings.capacity());
         System.out.println("Список numbers: " + numbers);
+        System.out.println("Вместимость numbers равна " + numbers.capacity());
+
         System.out.println();
 
         integers.ensureCapacity(7);
@@ -28,14 +32,22 @@ public class Main {
         strings.add("Hello");
         strings.add(1, "World!");
         System.out.println("Добавили элементы в strings: " + strings);
+        System.out.println("Размер strings равен " + strings.size() + ", вместимость strings равна " + strings.capacity());
         System.out.println();
 
         numbers.addAll(integers);
         System.out.println("Добавили в numbers все элементы integers, numbers теперь содержит: " + numbers);
+        System.out.println("Размер numbers равен " + numbers.size() + ", вместимость numbers равна " + numbers.capacity());
         System.out.println();
 
         numbers.addAll(1, integers);
         System.out.println("Добавили в numbers c индекса 1 все элементы integers, numbers теперь содержит: " + numbers);
+        System.out.println("Размер numbers равен " + numbers.size() + ", вместимость numbers равна " + numbers.capacity());
+        System.out.println();
+
+        numbers.addAll(integers);
+        System.out.println("Добавили в numbers все элементы integers, numbers теперь содержит: " + numbers);
+        System.out.println("Размер numbers равен " + numbers.size() + ", вместимость numbers равна " + numbers.capacity());
         System.out.println();
 
         numbers.remove(Integer.valueOf(4));

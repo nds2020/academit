@@ -1,7 +1,7 @@
 package ru.academit.nikitinds.graph;
 
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 public class MyGraph {
     private final int[][] adjacencyMatrix;
@@ -28,69 +28,73 @@ public class MyGraph {
         }
     }
 
-    public void breadthFirstIteration(Consumer<Integer> consumer) {
+    public void breadthFirstIteration(IntConsumer consumer) {
         checkForNull(consumer);
 
         boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
 
-        Deque<Integer> queue = new ArrayDeque<>(adjacencyMatrix.length);
-
-        int vertex;
+        Queue<Integer> queue = new ArrayDeque<>(adjacencyMatrix.length);
 
         for (int i = 0; i < visitedVertices.length; i++) {
-            if (!visitedVertices[i]) {
-                queue.add(i);
+            if (visitedVertices[i]) {
+                continue;
+            }
 
-                while (!queue.isEmpty()) {
-                    vertex = queue.remove();
+            queue.add(i);
 
-                    if (!visitedVertices[vertex]) {
-                        consumer.accept(vertex);
-                        visitedVertices[vertex] = true;
+            while (!queue.isEmpty()) {
+                int vertex = queue.remove();
 
-                        for (int j = 0; j < adjacencyMatrix.length; j++) {
-                            if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
-                                queue.add(j);
-                            }
-                        }
+                if (visitedVertices[vertex]) {
+                    continue;
+                }
+
+                consumer.accept(vertex);
+                visitedVertices[vertex] = true;
+
+                for (int j = 0; j < adjacencyMatrix.length; j++) {
+                    if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
+                        queue.add(j);
                     }
                 }
             }
         }
     }
 
-    public void depthFirstIteration(Consumer<Integer> consumer) {
+    public void depthFirstIteration(IntConsumer consumer) {
         checkForNull(consumer);
 
         boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
 
         Deque<Integer> stack = new ArrayDeque<>(adjacencyMatrix.length);
 
-        int vertex;
-
         for (int i = 0; i < visitedVertices.length; i++) {
-            if (!visitedVertices[i]) {
-                stack.push(i);
+            if (visitedVertices[i]) {
+                continue;
+            }
 
-                while (!stack.isEmpty()) {
-                    vertex = stack.pop();
+            stack.push(i);
 
-                    if (!visitedVertices[vertex]) {
-                        consumer.accept(vertex);
-                        visitedVertices[vertex] = true;
+            while (!stack.isEmpty()) {
+                int vertex = stack.pop();
 
-                        for (int j = adjacencyMatrix.length - 1; j >= 0; j--) {
-                            if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
-                                stack.push(j);
-                            }
-                        }
+                if (visitedVertices[vertex]) {
+                    continue;
+                }
+
+                consumer.accept(vertex);
+                visitedVertices[vertex] = true;
+
+                for (int j = adjacencyMatrix.length - 1; j >= 0; j--) {
+                    if (!visitedVertices[j] && adjacencyMatrix[vertex][j] != 0) {
+                        stack.push(j);
                     }
                 }
             }
         }
     }
 
-    public void recurseDepthFirstIteration(Consumer<Integer> consumer) {
+    public void recurseDepthFirstIteration(IntConsumer consumer) {
         checkForNull(consumer);
 
         boolean[] visitedVertices = new boolean[adjacencyMatrix.length];
@@ -102,7 +106,7 @@ public class MyGraph {
         }
     }
 
-    private void visitVertex(int vertex, boolean[] visitedVertices, Consumer<Integer> consumer) {
+    private void visitVertex(int vertex, boolean[] visitedVertices, IntConsumer consumer) {
         visitedVertices[vertex] = true;
         consumer.accept(vertex);
 
