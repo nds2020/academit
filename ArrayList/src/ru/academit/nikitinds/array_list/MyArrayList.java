@@ -71,7 +71,7 @@ public class MyArrayList<E> implements List<E> {
 
     public void ensureCapacity(int minCapacity) {
         if (minCapacity > elements.length) {
-            grow(minCapacity);
+            elements = Arrays.copyOf(elements, minCapacity);
         }
     }
 
@@ -113,22 +113,13 @@ public class MyArrayList<E> implements List<E> {
         checkIndexForAdd(index);
 
         if (length == elements.length) {
-            grow(length + 1);
+            elements = Arrays.copyOf(elements, elements.length * 2 + 1);
         }
 
         System.arraycopy(elements, index, elements, index + 1, length - index);
         elements[index] = element;
         length++;
         modCount++;
-    }
-
-    private void grow(int capacity) {
-        if (elements.length > 0) {
-            elements = Arrays.copyOf(elements, Math.max(capacity, elements.length * 2));
-        } else {
-            //noinspection unchecked
-            elements = (E[]) new Object[Math.max(DEFAULT_CAPACITY, capacity)];
-        }
     }
 
     @Override
@@ -145,7 +136,10 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
 
-        ensureCapacity(length + c.size());
+        if (length + c.size() > elements.length) {
+            elements = Arrays.copyOf(elements, elements.length * 2 + c.size());
+        }
+
         System.arraycopy(elements, index, elements, index + c.size(), length - index);
         int i = index;
 
@@ -321,7 +315,6 @@ public class MyArrayList<E> implements List<E> {
             throw new NullPointerException("Коллекция-аргумент не может быть null");
         }
     }
-
 
     private void checkIndex(int index) {
         if (index < 0 || index >= length) {
