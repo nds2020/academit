@@ -1,7 +1,6 @@
 package ru.academit.nikitinds.view;
 
 import ru.academit.nikitinds.controller.Controller;
-import ru.academit.nikitinds.model.types.Type;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,20 +28,18 @@ public class DesktopView implements View {
 
             panel.add(new JLabel("Выберите тип исходной температуры"));
 
-            Type[] types = controller.getTypes();
-
-            JComboBox<Type> initialTypesList = new JComboBox<>(types);
-            panel.add(initialTypesList);
+            JComboBox<String> initialTemperatureTypesList = new JComboBox<>(TemperatureTypes.getNames());
+            panel.add(initialTemperatureTypesList);
 
             panel.add(new JLabel("Выберите тип результата"));
 
-            JComboBox<Type> resultTypesList = new JComboBox<>(types);
-            panel.add(resultTypesList);
+            JComboBox<String> resultTemperatureTypesList = new JComboBox<>(TemperatureTypes.getNames());
+            panel.add(resultTemperatureTypesList);
 
             panel.add(new JLabel("Введите значение исходной температуры"));
 
-            JTextField initialValueField = new JTextField(FIELD_WIDTH);
-            panel.add(initialValueField);
+            JTextField initialTemperatureField = new JTextField(FIELD_WIDTH);
+            panel.add(initialTemperatureField);
 
             panel.add(new JLabel());
 
@@ -57,11 +54,9 @@ public class DesktopView implements View {
 
             convertButton.addActionListener(e -> {
                 try {
-                    double initialValue = Double.parseDouble(initialValueField.getText());
-                    controller.convert(
-                            initialValue,
-                            initialTypesList.getItemAt(initialTypesList.getSelectedIndex()),
-                            resultTypesList.getItemAt(resultTypesList.getSelectedIndex()));
+                    double initialTemperature = Double.parseDouble(initialTemperatureField.getText());
+                    controller.selectConverter(initialTemperatureTypesList.getItemAt(initialTemperatureTypesList.getSelectedIndex()));
+                    controller.convert(initialTemperature, resultTemperatureTypesList.getItemAt(resultTemperatureTypesList.getSelectedIndex()));
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Необходимо ввести число. Для разделения целой и дробной частей числа используйте \".\"",
                             "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -80,7 +75,7 @@ public class DesktopView implements View {
     }
 
     @Override
-    public void showResult(Type temperature) {
-        resultField.setText(String.valueOf(temperature.getValue()));
+    public void showResult(double temperature) {
+        resultField.setText(Double.toString(temperature));
     }
 }

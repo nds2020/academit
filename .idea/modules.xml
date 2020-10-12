@@ -16,6 +16,7 @@
       <module fileurl="file://$PROJECT_DIR$/Tree/Tree.iml" filepath="$PROJECT_DIR$/Tree/Tree.iml" />
       <module fileurl="file://$PROJECT_DIR$/Vector/Vector.iml" filepath="$PROJECT_DIR$/Vector/Vector.iml" />
       <module fileurl="file://$PROJECT_DIR$/academit.iml" filepath="$PROJECT_DIR$/academit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oldTemperature/oldTemperature.iml" filepath="$PROJECT_DIR$/oldTemperature/oldTemperature.iml" />
     </modules>
   </component>
 </project>

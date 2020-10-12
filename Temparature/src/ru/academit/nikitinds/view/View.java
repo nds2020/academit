@@ -1,7 +1,9 @@
 package ru.academit.nikitinds.view;
 
+import ru.academit.nikitinds.model.types.Type;
+
 public interface View {
     void start();
 
-    void showResult(double temperature);
+    void showResult(Type temperature);
 }

@@ -1,7 +1,6 @@
 package ru.academit.nikitinds.model;
 
 public class CelsiusConverter implements Converter {
-
     @Override
     public double convertToKelvin(double initialTemperature) {
         return initialTemperature + 273.15;

@@ -1,17 +1,18 @@
 package ru.academit.nikitinds.controller;
 
-import ru.academit.nikitinds.model.Converter;
-import ru.academit.nikitinds.model.FahrenheitConverter;
-import ru.academit.nikitinds.model.KelvinConverter;
-import ru.academit.nikitinds.view.TemperatureTypes;
+import ru.academit.nikitinds.model.converters.*;
+import ru.academit.nikitinds.model.types.Celsius;
+import ru.academit.nikitinds.model.types.Fahrenheit;
+import ru.academit.nikitinds.model.types.Kelvin;
+import ru.academit.nikitinds.model.types.Type;
 import ru.academit.nikitinds.view.View;
 
 public class DesktopController implements Controller {
-    private Converter converter;
     private View view;
 
-    public DesktopController(Converter converter) {
-        this.converter = converter;
+    @Override
+    public Type[] getTypes() {
+        return new Type[]{new Celsius(), new Fahrenheit(), new Kelvin()};
     }
 
     @Override
@@ -20,26 +21,22 @@ public class DesktopController implements Controller {
     }
 
     @Override
-    public void convert(double initialTemperature, String resultTemperatureType) {
-        double result;
+    public void convert(double value, Type initialTemp, Type resultTemp) {
+        initialTemp.setValue(value);
 
-        if (resultTemperatureType.equals(TemperatureTypes.CELSIUS.getName())) {
-            result = converter.convertToCelsius(initialTemperature);
-        } else if (resultTemperatureType.equals(TemperatureTypes.KELVIN.getName())) {
-            result = converter.convertToKelvin(initialTemperature);
-        } else {
-            result = converter.convertToFahrenheit(initialTemperature);
+        Converter[] converters = {
+                new CelsiusToFahrenheitConverter(), new CelsiusToKelvinConverter(),
+                new FahrenheitToCelsiusConverter(), new FahrenheitToKelvinConverter(),
+                new KelvinToCelsiusConverter(), new KelvinToFahrenheitConverter()};
+
+        for (Converter converter : converters) {
+            try {
+                converter.convert(initialTemp, resultTemp);
+                break;
+            } catch (ClassCastException ignored) {
+            }
         }
 
-        view.showResult(result);
-    }
-
-    @Override
-    public void selectConverter(String initialTemperatureType) {
-        if (initialTemperatureType.equals(TemperatureTypes.KELVIN.getName())) {
-            converter = new KelvinConverter();
-        } else if (initialTemperatureType.equals(TemperatureTypes.FAHRENHEIT.getName())) {
-            converter = new FahrenheitConverter();
-        }
+        view.showResult(resultTemp);
     }
 }
