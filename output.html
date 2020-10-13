@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html lang="ru">
-<meta charset="utf-8">
-<title>Результат перевода таблицы из CSV в HTML</title>
-<style>
-  table {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
+  <head>
+    <meta charset="utf-8">
+    <title>Результат перевода CSV в HTML</title>
+    <style>
+      table {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
 
-  td {
-    border: 1px solid black;
-    padding: 0 .5em;
-    vertical-align: top;
-  }
-</style>
-<table>
-  <tr>
-    <td>следующая ячейка содержит перевод строки</td>
-    <td>до перевода строки<br>после перевода строки</td>
-    <td>а это третий столбец</td>
-  </tr>
-  <tr>
-    <td>следующая ячейка содержит кавычку и запятую</td>
-    <td>вот они: ",</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>в этой строке вторая и третья ячейка содержат по одной кавычке</td>
-    <td>"</td>
-    <td>"</td>
-  </tr>
-  <tr>
-    <td>в этой строке вторая ячейка содержит спецсимволы</td>
-    <td>вот они: &lt &amp &gt</td>
-    <td>а тут 2 кавычки: ""</td>
-  </tr>
-</table>
+      td {
+        border: 1px solid black;
+        padding: 0 .5em;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td>следующая ячейка содержит перевод строки</td>
+        <td>до перевода строки<br>после перевода строки</td>
+        <td>а это третий столбец</td>
+      </tr>
+      <tr>
+        <td>следующая ячейка содержит кавычку и запятую</td>
+        <td>вот они: ",</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>в этой строке вторая и третья ячейка содержат по одной кавычке</td>
+        <td>"</td>
+        <td>"</td>
+      </tr>
+      <tr>
+        <td>в этой строке вторая ячейка содержит спецсимволы</td>
+        <td>вот они: &lt; &amp; &gt;</td>
+        <td>а тут 2 кавычки: ""</td>
+      </tr>
+    </table>
+  </body>
+</html>
