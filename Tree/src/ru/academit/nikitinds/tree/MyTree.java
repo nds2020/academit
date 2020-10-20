@@ -3,27 +3,44 @@ package ru.academit.nikitinds.tree;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MyTree<T extends Comparable<T>> {
+public class MyTree<T> {
     private final Comparator<T> comparator;
     private MyTreeNode<T> root;
     private int nodesCount;
 
     public MyTree() {
-        comparator = Comparator.nullsFirst(Comparator.naturalOrder());
+        comparator = null;
     }
 
     public MyTree(Comparator<T> comparator) {
-        this.comparator = (comparator == null) ? Comparator.nullsFirst(Comparator.naturalOrder()) : Comparator.nullsFirst(comparator);
+        this.comparator = (comparator == null) ? null : Comparator.nullsFirst(comparator);
     }
 
     public MyTree(T data, Comparator<T> comparator) {
         this.root = new MyTreeNode<>(data);
-        this.comparator = (comparator == null) ? Comparator.nullsFirst(Comparator.naturalOrder()) : Comparator.nullsFirst(comparator);
+        this.comparator = (comparator == null) ? null : Comparator.nullsFirst(comparator);
         nodesCount++;
     }
 
     public int size() {
         return nodesCount;
+    }
+
+    private int compare(T data, T treeNodeData) {
+        if (comparator == null) {
+            if (data == null) {
+                return treeNodeData == null ? 0 : -1;
+            }
+
+            if (treeNodeData == null) {
+                return 1;
+            }
+
+            //noinspection unchecked
+            return ((Comparable<? super T>) data).compareTo(treeNodeData);
+        }
+
+        return comparator.compare(data, treeNodeData);
     }
 
     public boolean add(T data) {
@@ -38,7 +55,7 @@ public class MyTree<T extends Comparable<T>> {
         MyTreeNode<T> parent = root;
 
         while (true) {
-            if (comparator.compare(node.getData(), parent.getData()) < 0) {
+            if (compare(node.getData(), parent.getData()) < 0) {
                 if (parent.getLeftChild() != null) {
                     parent = parent.getLeftChild();
                     continue;
@@ -69,7 +86,7 @@ public class MyTree<T extends Comparable<T>> {
         MyTreeNode<T> node = root;
 
         while (true) {
-            int compareResult = comparator.compare(data, node.getData());
+            int compareResult = compare(data, node.getData());
 
             if (compareResult == 0) {
                 return true;
@@ -101,7 +118,7 @@ public class MyTree<T extends Comparable<T>> {
         boolean belongRemovedNodeToRightSubtree = false;
 
         while (true) {
-            int compareResult = comparator.compare(data, removedNode.getData());
+            int compareResult = compare(data, removedNode.getData());
 
             if (compareResult == 0) {
                 break;
