@@ -1,7 +1,7 @@
 package ru.academit.nikitinds.view;
 
 import ru.academit.nikitinds.controller.Controller;
-import ru.academit.nikitinds.model.types.Type;
+import ru.academit.nikitinds.model.TemperatureScale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,17 +27,17 @@ public class DesktopView implements View {
             JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
             panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            panel.add(new JLabel("Выберите тип исходной температуры"));
+            panel.add(new JLabel("Выберите шкалу исходной температуры"));
 
-            Type[] types = controller.getTypes();
+            TemperatureScale[] scales = controller.getScales();
 
-            JComboBox<Type> initialTypesList = new JComboBox<>(types);
-            panel.add(initialTypesList);
+            JComboBox<TemperatureScale> initialScalesList = new JComboBox<>(scales);
+            panel.add(initialScalesList);
 
-            panel.add(new JLabel("Выберите тип результата"));
+            panel.add(new JLabel("Выберите шкалу результата"));
 
-            JComboBox<Type> resultTypesList = new JComboBox<>(types);
-            panel.add(resultTypesList);
+            JComboBox<TemperatureScale> resultScalesList = new JComboBox<>(scales);
+            panel.add(resultScalesList);
 
             panel.add(new JLabel("Введите значение исходной температуры"));
 
@@ -60,10 +60,11 @@ public class DesktopView implements View {
                     double initialValue = Double.parseDouble(initialValueField.getText());
                     controller.convert(
                             initialValue,
-                            initialTypesList.getItemAt(initialTypesList.getSelectedIndex()),
-                            resultTypesList.getItemAt(resultTypesList.getSelectedIndex()));
+                            initialScalesList.getItemAt(initialScalesList.getSelectedIndex()),
+                            resultScalesList.getItemAt(resultScalesList.getSelectedIndex()));
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Необходимо ввести число. Для разделения целой и дробной частей числа используйте \".\"",
+                    JOptionPane.showMessageDialog(null, "Необходимо ввести число. " +
+                            "Для разделения целой и дробной частей числа используйте \".\"",
                             "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             });
@@ -80,7 +81,7 @@ public class DesktopView implements View {
     }
 
     @Override
-    public void showResult(Type temperature) {
-        resultField.setText(String.valueOf(temperature.getValue()));
+    public void showResult(double value) {
+        resultField.setText(Double.toString(value));
     }
 }
