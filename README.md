@@ -1,2 +1,2 @@
 # academit
-учебные задачи с курса ООП на Java в Academ IT Scool
+Домашние задачи с курса ООП на Java в Academ IT Scool
